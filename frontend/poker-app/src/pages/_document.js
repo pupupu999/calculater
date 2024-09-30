@@ -1,5 +1,7 @@
 import Document from 'next/document';
 import { ServerStyleSheet } from 'styled-components';
+import { Html, Head, Main, NextScript } from 'next/document';
+
 
 export default class MyDocument extends Document {
   static async getInitialProps(ctx) {
