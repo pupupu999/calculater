@@ -1,77 +1,47 @@
 import styles from "@/styles/style.module.css";
 import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
-
-let socket;
+import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { auth } from './firebase';
+import { useRouter } from "next/router";
 
 export default function Home() {
-  const [roomId, setRoomId] = useState('');
-  const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [receivedMessage, setReceivedMessage] = useState('');
-  const [joined, setJoined] = useState(false);
+  const [user, setUser] = useState(null);
+  const router = useRouter();
 
   useEffect(() => {
-    socket = io();
-
-    socket.on('receive_message', (data) => {
-      setReceivedMessage(data.message);
-    });
-
-    return () => {
-      socket.disconnect();
-    };
-  }, []);
-
-  const createRoom = () => {
-    socket.emit('create_room', { roomId, password });
-    setJoined(true);
-  };
-
-  const joinRoom = () => {
-    socket.emit('join_room', { roomId, password }, (response) => {
-      if (response.success) {
-        setJoined(true);
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      if (currentUser) {
+        setUser(currentUser);
       } else {
-        alert(response.message);
+        setUser(null);
       }
     });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogout = () => {
+    signOut(auth).then(() => {
+      console.log("Logged out");
+    }).catch((error) => {
+      console.error("Error during logout:", error);
+    });
   };
 
-  const sendMessage = () => {
-    socket.emit('message', { roomId, message });
-    setMessage('');
+  const goToLogin = () => {
+    router.push("/login");
   };
 
   return (
     <div>
-      {!joined ? (
+      {user ? (
         <div>
-          <input
-            type="text"
-            placeholder="Room ID"
-            value={roomId}
-            onChange={(e) => setRoomId(e.target.value)}
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <button onClick={createRoom}>Create Room</button>
-          <button onClick={joinRoom}>Join Room</button>
+          <h1>Welcome, {user.displayName}</h1>
+          <button onClick={handleLogout}>Logout</button>
         </div>
       ) : (
         <div>
-          <input
-            type="text"
-            placeholder="Message"
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
-          />
-          <button onClick={sendMessage}>Send Message</button>
-          <p>Received Message: {receivedMessage}</p>
+          <h1>Please login</h1>
+          <button onClick={goToLogin}>Go to Login</button> {/* ボタンをクリックでloginページに遷移 */}
         </div>
       )}
     </div>
