@@ -2,6 +2,7 @@ import styles from "@/styles/style.module.css";
 import React, { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
+import { useRouter } from "next/router";
 
 export default function Login() {
   const [userid, setUserid] = useState('');
@@ -21,6 +22,16 @@ export default function Login() {
     }
   };
 
+  const goToCreateRoom = () => {
+    // ルーム作成ページに遷移
+    router.push("/CreateRoom");
+  };
+
+    const goToJoinRoom = () => {
+    // ルーム参加ページに遷移
+    router.push("/JoinRoom");
+    };
+
   return (
     <div className={styles.background}>
       <div>
@@ -28,7 +39,11 @@ export default function Login() {
         {!logined ? (
           <button onClick={handleGoogleLogin}>Login with Google</button>
         ) : (
-          <h2>Welcome, you are logged in!</h2>
+            <>
+                <h2>Welcome, you are logged in!</h2>
+                <button onClick={goToCreateRoom}>Create Room</button>
+                <button onClick={goToJoinRoom}>Join Room</button>
+            </>
         )}
       </div>
     </div>

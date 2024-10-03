@@ -1,3 +1,4 @@
+import Header from "@/components/Header";
 import styles from "@/styles/style.module.css";
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
@@ -12,85 +13,86 @@ export default function CreateRoom() {
     const [message, setMessage] = useState('');
     const [receivedMessage, setReceivedMessage] = useState('');
     const [joined, setJoined] = useState(false);
-  
+
     useEffect(() => {
-      socket = io();
-  
-      socket.on('receive_message', (data) => {
+        socket = io();
+
+        socket.on('receive_message', (data) => {
         setReceivedMessage(data.message);
-      });
-  
-      return () => {
+    });
+
+    return () => {
         socket.disconnect();
-      };
+    };
     }, []);
-  
+
     const createRoom = () => {
-      socket.emit('create_room', { roomId, password });
-      setJoined(true);
+        socket.emit('create_room', { roomId, roomStack, roomMember, password });
+        setJoined(true);
     };
-  
-    const joinRoom = () => {
-      socket.emit('join_room', { roomId, password }, (response) => {
-        if (response.success) {
-          setJoined(true);
-        } else {
-          alert(response.message);
-        }
-      });
+
+    const deleteRoom = () => {
+        socket.emit('delete_room', { roomId });
+        setJoined(false);
     };
-  
+
     const sendMessage = () => {
-      socket.emit('message', { roomId, message });
-      setMessage('');
+        socket.emit('message', { roomId, message });
+        setMessage('');
     };
-  
-    return (
-      <div className={styles.background}>
-        <div>
-          {!joined ? (
-            <div>
-              <input
-                type="text"
-                placeholder="Room ID"
-                value={roomId}
-                onChange={(e) => setRoomId(e.target.value)}
-              />
-              <input
-                type="password"
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button onClick={createRoom}>Create Room</button>
-              <button onClick={joinRoom}>Join Room</button>
-            </div>
-          ) : (
-            <div>
-              <input
-                type="text"
-                placeholder="Message"
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
-              <button onClick={sendMessage}>Send Message</button>
-              <p>Received Message: {receivedMessage}</p>
-            </div>
-          )}
-        </div>
-      </div>
-    );
+
     return (
         <div className={styles.background}>
-            <div className={styles.title}>ルーム作成</div>
-            <div className={styles.textbox}>
-                <input type="text" className={styles.input} placeholder="ルームID" />
-                <input type="text" className={styles.input} placeholder="スタック" />
-                <input type="text" className={styles.input} placeholder="参加人数" />
+        <Header />
+        <div className={styles.body}>
+            {!joined ? (
+            <div>
+                <div className={styles.textbox}>
+                    <input
+                        className={styles.input} 
+                        type="text"
+                        placeholder="ルームID"
+                        value={roomId}
+                        onChange={(e) => setRoomId(e.target.value)}
+                    />
+                    <input
+                        className={styles.input} 
+                        type="number"
+                        placeholder="スタック"
+                        value={roomStack}
+                        onChange={(e) => setRoomStack(e.target.value)}
+                    />
+                    <input
+                        className={styles.input} 
+                        type="number"
+                        placeholder="人数"
+                        value={roomMember}
+                        onChange={(e) => setRoomMember(e.target.value)}
+                    />
+                    <input
+                        className={styles.input} 
+                        type="password"
+                        placeholder="パスワード"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button className={styles.button} onClick={createRoom}>ルーム作成</button>
+                </div>
             </div>
-            <div className={styles.createButtonLocation}>
-                <button className={styles.button}>作成</button>
+            ) : (
+            <div>
+                <input
+                    type="text"
+                    placeholder="Message"
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                />
+                <button onClick={sendMessage}>Send Message</button>
+                <p>Received Message: {receivedMessage}</p>
+                <button onClick={deleteRoom}>Delete Room</button>
             </div>
+            )}
+        </div>
         </div>
     );
 }
