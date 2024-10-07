@@ -96,6 +96,8 @@
    width: 30%;
    font-weight: bold;
    aspect-ratio: 5/2;
+   margin-top: 30px;
+   font-size: 1.2em;
 }
 
 .createButtonLocation {
@@ -103,5 +105,75 @@
 }
 
 .input {
+   width: 40%;
+   height: 60px;
    background-color: #DDE6ED;
+   margin: 10px;
+   color: black;
+   font-size: 1.2em;
+}
+
+.textbox {
+   width: 100%;
+   align-items: center;
+   display: flex;
+   flex-flow: column;
+   margin-top: 150px;
+}
+
+.header {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   background-color: #333;
+   padding: 10px 20px;
+   color: white;
+}
+
+.logo h1 {
+   margin: 0;
+}
+
+.nav {
+   display: flex;
+   gap: 20px;
+}
+
+.nav ul {
+   list-style: none;
+   display: flex;
+   margin: 0;
+   padding: 0;
+}
+
+.nav li a {
+   color: white;
+   text-decoration: none;
+}
+
+.hamburger {
+   display: none;
+   cursor: pointer;
+}
+
+ /* スマートフォン用 */
+@media (max-width: 768px) {
+.nav {
+   display: none;
+   flex-direction: column;
+   position: absolute;
+   top: 60px; /* ヘッダーの高さに合わせる */
+   left: 0;
+   right: 0;
+   background-color: #333;
+}
+
+.nav.active {
+   display: flex;
+}
+
+.hamburger {
+   display: block;
+   font-size: 24px;
+}
 }
