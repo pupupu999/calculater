@@ -19,6 +19,7 @@ export default function handler(req, res) {
                 if (rooms[roomId]) {
                     if (rooms[roomId].password === password) {
                         socket.join(roomId);
+                        io.to(roomId).emit('user_connected', { username });
                         callback({ success: true });
                     } else {
                         callback({ success: false, message: 'Incorrect password' });

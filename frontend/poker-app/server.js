@@ -23,10 +23,16 @@ app.prepare().then(() => {
         console.log('User connected', socket.id);
 
         // ユーザーが部屋に参加する処理
-        socket.on('join_room', async ({ roomId, password }, callback) => {
+        socket.on('join_room', async ({ roomId, username, password }, callback) => {
             if (rooms[roomId]) {
                 if (rooms[roomId].password === password) {
+                    if(!rooms[roomId].users) {
+                        rooms[roomId].users = [];
+                    }
+                    //ユーザー情報の追加
+                    rooms[roomId].users.push({ socketId: socket.id, username });
                     socket.join(roomId);
+                    io.to(roomId).emit('user_connected', rooms[roomId].users);
                     callback({ success: true });
                 } else {
                     callback({ success: false, message: 'Incorrect password' });
@@ -37,8 +43,9 @@ app.prepare().then(() => {
         });
 
         // 部屋の作成処理
-        socket.on('create_room', ({ roomId, roomStack, roomMember, password }) => {
-            rooms[roomId] = { password };
+        socket.on('create_room', ({ roomId, userid, roomStack, roomMember, password }) => {
+            rooms[roomId] = { password: password, users: [userid] };
+            io.to(roomId).emit('user_connected', rooms[roomId].users);
             socket.join(roomId);
             console.log(`Room ${roomId} created`);
         });
@@ -54,11 +61,21 @@ app.prepare().then(() => {
         });
 
         // 他のユーザーが部屋にいることを確認するための処理
-        socket.on('message', (data) => {
-            io.to(data.roomId).emit('receive_message', data);
+        socket.on('message', ({roomId, username, message}) => {
+            console.log('roomId:', roomId);
+            io.to(roomId).emit('receive_message', {username, message});
         });
 
         socket.on('disconnect', () => {
+            // 切断されたユーザーを各ルームから削除
+            for (const roomId in rooms) {
+                if (rooms[roomId].users) {
+                    rooms[roomId].users = rooms[roomId].users.filter((user) => user.socketId !== socket.id);
+        
+                    // 更新されたユーザーリストを送信
+                    io.to(roomId).emit('room_users', rooms[roomId]);
+                }
+            }
             console.log('User disconnected', socket.id);
         });
     });

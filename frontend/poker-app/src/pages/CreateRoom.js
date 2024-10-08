@@ -2,32 +2,75 @@ import Header from "@/components/Header";
 import styles from "@/styles/style.module.css";
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "@/pages/firebase";
 
 let socket;
 
 export default function CreateRoom() {
     const [roomId, setRoomId] = useState('');
     const [password, setPassword] = useState('');
+    const [username, setUsername] = useState('');
     const [roomStack, setRoomStack] = useState('');
     const [roomMember, setRoomMember] = useState('');
     const [message, setMessage] = useState('');
-    const [receivedMessage, setReceivedMessage] = useState('');
+    const [users, setUsers] = useState([]);
     const [joined, setJoined] = useState(false);
 
     useEffect(() => {
+        const userid = sessionStorage.getItem('userid');
+        const cleanedUserid = userid.trim().replace(/['"]+/g, '');
+        if(cleanedUserid) {
+            const fetchUserInfo = async () => {
+                try {
+                    const docRef = doc(db, 'users', cleanedUserid);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        setUsername(docSnap.data().userid);
+                        setUsers([{username: docSnap.data().userid, message: []}]);
+                    } else {
+                        console.log(docSnap.data());
+                        console.log("ユーザー情報が見つかりません!");
+                    }
+                } catch (error) {
+                    console.error("ユーザー情報取得中にエラーが発生しました！", error);
+                }
+            }
+
+            fetchUserInfo();
+        } else {
+            console.log("ユーザー情報がありません。ログインしてください。");
+            window.location.href = '/login';
+        }
         socket = io();
 
-        socket.on('receive_message', (data) => {
-        setReceivedMessage(data.message);
-    });
+        socket.on('receive_message', ({username, message}) => {
+            setUsers((prevUsers) => {
+                const updateUsers = prevUsers.map((user) => {
+                    if (user.username === username) {
+                        return { ...user, message: [...user.message, message]};
+                    }
+                    return user;
+                });
+                console.log(updateUsers);
+                return updateUsers;
+            });
+            console.log(users);
+        });
 
-    return () => {
-        socket.disconnect();
-    };
+        //新しいユーザーが接続したときの処理
+        socket.on('user_connected', (user) => {
+            console.log('user_connected', user);
+            setUsers((prevUsers) => [...prevUsers, {username: user.username, message: []}]);
+        });
+
+        return () => {
+            socket.disconnect();
+        };
     }, []);
 
     const createRoom = () => {
-        socket.emit('create_room', { roomId, roomStack, roomMember, password });
+        socket.emit('create_room', { roomId, username, roomStack, roomMember, password });
         setJoined(true);
     };
 
@@ -37,7 +80,8 @@ export default function CreateRoom() {
     };
 
     const sendMessage = () => {
-        socket.emit('message', { roomId, message });
+        console.log('送り主',username);
+        socket.emit('message', { roomId, username, message });
         setMessage('');
     };
 
@@ -88,7 +132,14 @@ export default function CreateRoom() {
                     onChange={(e) => setMessage(e.target.value)}
                 />
                 <button onClick={sendMessage}>Send Message</button>
-                <p>Received Message: {receivedMessage}</p>
+                <div>
+                    {users.map((user, index) => (
+                        <div key={index}>
+                            <h3>{user.username}のメッセージ</h3>
+                            <p>{user.message}</p>
+                        </div>
+                    ))}
+                </div>
                 <button onClick={deleteRoom}>Delete Room</button>
             </div>
             )}

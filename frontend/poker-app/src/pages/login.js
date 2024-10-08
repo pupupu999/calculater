@@ -28,17 +28,17 @@ const handleGoogleLogin = async () => {
 
 const registerUser = async () => {
     try {
-    const response = await fetch('/api/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userid, password })
-    });
-    const data = await response.json();
-    alert(data.message);
-    setLogined(true);
+        const response = await fetch('/api/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userid, password })
+        });
+        const data = await response.json();
+        alert(data.message);
+        setLogined(true);
     } catch (error) {
-    console.error('Error registering user:', error);
-    alert('アカウント作成に失敗しました');
+        console.error('Error registering user:', error);
+        alert('アカウント作成に失敗しました');
     }
 };
 
@@ -52,6 +52,7 @@ const loginUser = async () => {
     const data = await response.json();
     if (data.message === 'Login successful!') {
         alert('ログイン成功');
+        sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
         setLogined(true);
     } else {
         alert(data.message);
