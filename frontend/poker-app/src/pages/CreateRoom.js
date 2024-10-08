@@ -59,9 +59,9 @@ export default function CreateRoom() {
         });
 
         //新しいユーザーが接続したときの処理
-        socket.on('user_connected', (user) => {
-            console.log('user_connected', user);
-            setUsers((prevUsers) => [...prevUsers, {username: user.username, message: []}]);
+        socket.on('user_connected', (user_username) => {
+            console.log('user_connected', user_username);
+            setUsers((prevUsers) => [...prevUsers, {username: user_username, message: []}]);
         });
 
         return () => {
@@ -80,7 +80,6 @@ export default function CreateRoom() {
     };
 
     const sendMessage = () => {
-        console.log('送り主',username);
         socket.emit('message', { roomId, username, message });
         setMessage('');
     };

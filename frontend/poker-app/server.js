@@ -31,8 +31,11 @@ app.prepare().then(() => {
                     }
                     //ユーザー情報の追加
                     rooms[roomId].users.push({ socketId: socket.id, username });
+                    console.log(rooms[roomId].users);
                     socket.join(roomId);
-                    io.to(roomId).emit('user_connected', rooms[roomId].users);
+                    console.log('ユーザーのやつ', rooms[roomId].users);
+                    const lastUser = rooms[roomId].users[rooms[roomId].users.length - 1].username;
+                    io.to(roomId).emit('user_connected', lastUser);
                     callback({ success: true });
                 } else {
                     callback({ success: false, message: 'Incorrect password' });

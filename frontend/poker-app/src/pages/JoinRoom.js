@@ -57,8 +57,9 @@ export default function JoinRoom() {
         });
 
         //新しいユーザーが接続したときの処理
-        socket.on('user_connected', (user) => {
-            setUsers((prevUsers) => [...prevUsers, {username: user.username, message: []}]);
+        socket.on('user_connected', (user_username) => {
+            console.log('つながったよ', user_username);
+            setUsers((prevUsers) => [...prevUsers, {username: user_username, message: []}]);
         });
 
         return () => {
@@ -119,7 +120,7 @@ export default function JoinRoom() {
                 <div>
                     {users.map((user, index) => (
                         <div key={index}>
-                            <h3>{user.userid}のメッセージ</h3>
+                            <h3>{user.username}のメッセージ</h3>
                             <p>{user.message}</p>
                         </div>
                     ))}
