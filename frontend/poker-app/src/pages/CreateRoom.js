@@ -27,7 +27,7 @@ export default function CreateRoom() {
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         setUsername(docSnap.data().userid);
-                        setUsers([{username: docSnap.data().userid, message: []}]);
+                        setUsers([{username: docSnap.data().userid, message: ''}]);
                     } else {
                         console.log(docSnap.data());
                         console.log("ユーザー情報が見つかりません!");
@@ -48,7 +48,7 @@ export default function CreateRoom() {
             setUsers((prevUsers) => {
                 const updateUsers = prevUsers.map((user) => {
                     if (user.username === username) {
-                        return { ...user, message: [...user.message, message]};
+                        return { ...user, message: message};
                     }
                     return user;
                 });

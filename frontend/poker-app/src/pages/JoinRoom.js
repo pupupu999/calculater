@@ -18,7 +18,6 @@ export default function JoinRoom() {
     useEffect(() => {
         const userid = sessionStorage.getItem('userid');
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
-        console.log('こんにちは！');
         if(cleanedUserid) {
             const fetchUserInfo = async () => {
                 try {
@@ -26,7 +25,7 @@ export default function JoinRoom() {
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         setUsername(docSnap.data().userid);
-                        setUsers([{socketId: '', username: docSnap.data().userid, message: []}]);
+                        setUsers([{socketId: '', username: docSnap.data().userid, message: ''}]);
                     } else {
                         console.log("ユーザー情報が見つかりません!");
                     }
@@ -47,7 +46,7 @@ export default function JoinRoom() {
             setUsers((prevUsers) => {
                 const updateUsers = prevUsers.map((user) => {
                     if (user.username === username) {
-                        return { ...user, message: [...user.message, message]};
+                        return { ...user, message: message};
                     }
                     return user;
                 });

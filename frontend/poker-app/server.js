@@ -30,7 +30,7 @@ app.prepare().then(() => {
                         rooms[roomId].users = [];
                     }
                     //ユーザー情報の追加
-                    rooms[roomId].users.push({ socketId: socket.id, username, message: [] });
+                    rooms[roomId].users.push({ socketId: socket.id, username, message: '' });
                     socket.join(roomId);
                     // const lastUser = rooms[roomId].users[rooms[roomId].users.length - 1].username;
                     // const lastUserSocketId = rooms[roomId].users[rooms[roomId].users.length - 1].socketId;
@@ -47,7 +47,7 @@ app.prepare().then(() => {
 
         // 部屋の作成処理
         socket.on('create_room', ({ roomId, username, roomStack, roomMember, password }) => {
-            rooms[roomId] = { password: password, users: [{ socketId: socket.id, username, message: [] }] };
+            rooms[roomId] = { password: password, users: [{ socketId: socket.id, username, message: '' }] };
             console.log('やっぱり確認なのだ', rooms[roomId].users);
             io.to(roomId).emit('user_connected', rooms[roomId].users);
             socket.join(roomId);
@@ -70,7 +70,7 @@ app.prepare().then(() => {
             console.log('確認なのだ', rooms[roomId].users);
             rooms[roomId].users.forEach((user) => {
                 if (user.username === username) {
-                    user.message.push(message);
+                    user.message = message;
                 }
             });
             console.log('確認なのだ', rooms[roomId].users);
