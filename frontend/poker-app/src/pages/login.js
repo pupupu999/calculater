@@ -35,6 +35,7 @@ const registerUser = async () => {
         });
         const data = await response.json();
         alert(data.message);
+        sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
         setLogined(true);
     } catch (error) {
         console.error('Error registering user:', error);
