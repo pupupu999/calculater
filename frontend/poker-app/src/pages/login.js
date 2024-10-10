@@ -28,6 +28,10 @@ const handleGoogleLogin = async () => {
 
 const registerUser = async () => {
     try {
+        if (!userid || !password) {
+            alert('ユーザーIDとパスワードを入力してください');
+            return;
+        }
         const response = await fetch('/api/register', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -39,25 +43,28 @@ const registerUser = async () => {
         setLogined(true);
     } catch (error) {
         console.error('Error registering user:', error);
-        alert('アカウント作成に失敗しました');
     }
 };
 
 const loginUser = async () => {
     try {
-    const response = await fetch('/api/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ userid, password })
-    });
-    const data = await response.json();
-    if (data.message === 'Login successful!') {
-        alert('ログイン成功');
-        sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
-        setLogined(true);
-    } else {
-        alert(data.message);
-    }
+        if (!userid || !password) {
+            alert('ユーザーIDとパスワードを入力してください');
+            return;
+        }
+        const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userid, password })
+        });
+        const data = await response.json();
+        if (data.message === 'Login successful!') {
+            alert('ログイン成功');
+            sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
+            setLogined(true);
+        } else {
+            alert(data.message);
+        }
     } catch (error) {
     console.error('Error logging in:', error);
     alert('ログインに失敗しました');
