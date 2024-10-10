@@ -30,12 +30,12 @@ app.prepare().then(() => {
                         rooms[roomId].users = [];
                     }
                     //ユーザー情報の追加
-                    rooms[roomId].users.push({ socketId: socket.id, username });
-                    console.log(rooms[roomId].users);
+                    rooms[roomId].users.push({ socketId: socket.id, username, message: [] });
                     socket.join(roomId);
-                    console.log('ユーザーのやつ', rooms[roomId].users);
-                    const lastUser = rooms[roomId].users[rooms[roomId].users.length - 1].username;
-                    io.to(roomId).emit('user_connected', lastUser);
+                    // const lastUser = rooms[roomId].users[rooms[roomId].users.length - 1].username;
+                    // const lastUserSocketId = rooms[roomId].users[rooms[roomId].users.length - 1].socketId;
+                    io.to(roomId).emit('user_connected',  (rooms[roomId].users));
+        
                     callback({ success: true });
                 } else {
                     callback({ success: false, message: 'Incorrect password' });
@@ -46,8 +46,9 @@ app.prepare().then(() => {
         });
 
         // 部屋の作成処理
-        socket.on('create_room', ({ roomId, userid, roomStack, roomMember, password }) => {
-            rooms[roomId] = { password: password, users: [userid] };
+        socket.on('create_room', ({ roomId, username, roomStack, roomMember, password }) => {
+            rooms[roomId] = { password: password, users: [{ socketId: socket.id, username, message: [] }] };
+            console.log('やっぱり確認なのだ', rooms[roomId].users);
             io.to(roomId).emit('user_connected', rooms[roomId].users);
             socket.join(roomId);
             console.log(`Room ${roomId} created`);
@@ -66,6 +67,13 @@ app.prepare().then(() => {
         // 他のユーザーが部屋にいることを確認するための処理
         socket.on('message', ({roomId, username, message}) => {
             console.log('roomId:', roomId);
+            console.log('確認なのだ', rooms[roomId].users);
+            rooms[roomId].users.forEach((user) => {
+                if (user.username === username) {
+                    user.message.push(message);
+                }
+            });
+            console.log('確認なのだ', rooms[roomId].users);
             io.to(roomId).emit('receive_message', {username, message});
         });
 

@@ -59,9 +59,9 @@ export default function CreateRoom() {
         });
 
         //新しいユーザーが接続したときの処理
-        socket.on('user_connected', (user_username) => {
-            console.log('user_connected', user_username);
-            setUsers((prevUsers) => [...prevUsers, {username: user_username, message: []}]);
+        socket.on('user_connected', (userInfo) => {
+            console.log('user_connected', userInfo);
+            setUsers(userInfo);
         });
 
         return () => {

@@ -12,7 +12,6 @@ export default function JoinRoom() {
     const [password, setPassword] = useState('');
     const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const [receivedMessage, setReceivedMessage] = useState('');
     const [users, setUsers] = useState([]);
     const [joined, setJoined] = useState(false);
 
@@ -27,7 +26,7 @@ export default function JoinRoom() {
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         setUsername(docSnap.data().userid);
-                        setUsers([{username: docSnap.data().userid, message: []}]);
+                        setUsers([{socketId: '', username: docSnap.data().userid, message: []}]);
                     } else {
                         console.log("ユーザー情報が見つかりません!");
                     }
@@ -57,9 +56,9 @@ export default function JoinRoom() {
         });
 
         //新しいユーザーが接続したときの処理
-        socket.on('user_connected', (user_username) => {
-            console.log('つながったよ', user_username);
-            setUsers((prevUsers) => [...prevUsers, {username: user_username, message: []}]);
+        socket.on('user_connected', (userInfo) => {
+            console.log('つながったよ', userInfo);
+            setUsers(userInfo);
         });
 
         return () => {
