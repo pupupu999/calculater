@@ -19,6 +19,7 @@ export default function CreateRoom() {
 
     useEffect(() => {
         const userid = sessionStorage.getItem('userid');
+
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
         if(cleanedUserid) {
             const fetchUserInfo = async () => {
@@ -130,7 +131,7 @@ export default function CreateRoom() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-                <button onClick={sendMessage}>Send Message</button>
+                <button onClick={sendMessage}>送信する</button>
                 <div>
                     {users.map((user, index) => (
                         <div key={index}>

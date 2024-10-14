@@ -17,6 +17,7 @@ export default function JoinRoom() {
 
     useEffect(() => {
         const userid = sessionStorage.getItem('userid');
+
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
         if(cleanedUserid) {
             const fetchUserInfo = async () => {
@@ -76,6 +77,12 @@ export default function JoinRoom() {
         });
     };
 
+    const leaveRoom = () => {
+        socket.emit('leave_room', { roomId, username });
+        setJoined(false);
+    }
+
+
     const sendMessage = () => {
         socket.emit('message', { roomId, username, message });
         setMessage('');
@@ -114,7 +121,8 @@ export default function JoinRoom() {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-                <button onClick={sendMessage}>Send Message</button>
+                <button onClick={sendMessage}>送信する</button>
+                <button onClick={leaveRoom}>退室する</button>
                 <div>
                     {users.map((user, index) => (
                         <div key={index}>

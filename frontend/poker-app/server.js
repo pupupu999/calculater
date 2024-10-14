@@ -81,6 +81,15 @@ app.prepare().then(() => {
             io.to(roomId).emit('receive_message', {username, message});
         });
 
+        // ユーザーが部屋から退出する処理
+        socket.on('leave_room', ({ roomId, username }) => {
+            if (rooms[roomId]) {
+                rooms[roomId].users = rooms[roomId].users.filter((user) => user.username !== username);
+                io.to(roomId).emit('user_connected', rooms[roomId].users);
+                socket.leave(roomId);
+            }
+        });
+
         socket.on('disconnect', () => {
             // 切断されたユーザーを各ルームから削除
             for (const roomId in rooms) {
