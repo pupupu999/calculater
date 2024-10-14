@@ -14,6 +14,7 @@ export default function JoinRoom() {
     const [message, setMessage] = useState('');
     const [users, setUsers] = useState([]);
     const [joined, setJoined] = useState(false);
+    const [total, setTotal] = useState(0);
 
     useEffect(() => {
         const userid = sessionStorage.getItem('userid');
@@ -43,7 +44,7 @@ export default function JoinRoom() {
 
         socket = io();
 
-        socket.on('receive_message', ({username, message}) => {
+        socket.on('receive_message', ({username, message, total}) => {
             setUsers((prevUsers) => {
                 const updateUsers = prevUsers.map((user) => {
                     if (user.username === username) {
@@ -53,12 +54,20 @@ export default function JoinRoom() {
                 });
                 return updateUsers;
             });
+
+            setTotal(total);
         });
 
         //新しいユーザーが接続したときの処理
-        socket.on('user_connected', (userInfo) => {
+        socket.on('user_connected', ({userInfo, total}) => {
             console.log('つながったよ', userInfo);
             setUsers(userInfo);
+            setTotal(total);
+        });
+
+        socket.on('room_deleted', () => {
+            alert('部屋が削除されました');
+            setJoined(false);
         });
 
         return () => {
@@ -115,8 +124,11 @@ export default function JoinRoom() {
             </div>
             ) : (
             <div>
+                <h2>ROOM ID:{roomId}</h2>
+                <h3>Total</h3>
+                <p>{total}</p>
                 <input
-                    type="text"
+                    type="number"
                     placeholder="Message"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}

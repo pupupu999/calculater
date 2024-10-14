@@ -36,7 +36,7 @@ app.prepare().then(() => {
                         //ユーザー情報の追加
                         rooms[roomId].users.push({ socketId: socket.id, username, message: '' });
                         socket.join(roomId);
-                        io.to(roomId).emit('user_connected',  (rooms[roomId].users));
+                        io.to(roomId).emit('user_connected',  ({userInfo: rooms[roomId].users, total: rooms[roomId].total}));
             
                         callback({ success: true });
                     } else {
@@ -52,7 +52,7 @@ app.prepare().then(() => {
 
         // 部屋の作成処理
         socket.on('create_room', ({ roomId, username, roomStack, roomMember, password }) => {
-            rooms[roomId] = { password: password, stack: roomStack, capacity: Number(roomMember), users: [{ socketId: socket.id, username, message: '' }] };
+            rooms[roomId] = { password: password, stack: roomStack, capacity: Number(roomMember), users: [{ socketId: socket.id, username, message: '' }], total: 0 };
             io.to(roomId).emit('user_connected', rooms[roomId].users);
             socket.join(roomId);
             console.log(`Room ${roomId} created`);
@@ -71,14 +71,16 @@ app.prepare().then(() => {
         // 他のユーザーが部屋にいることを確認するための処理
         socket.on('message', ({roomId, username, message}) => {
             console.log('roomId:', roomId);
-            console.log('確認なのだ', rooms[roomId].users);
+            console.log('確認なのだ', rooms[roomId].stack);
+            rooms[roomId].total = 0;
             rooms[roomId].users.forEach((user) => {
                 if (user.username === username) {
                     user.message = message;
                 }
+                console.log('確認なのだ', user);
+                rooms[roomId].total = rooms[roomId].total + (user.message - rooms[roomId].stack);
             });
-            console.log('確認なのだ', rooms[roomId].users);
-            io.to(roomId).emit('receive_message', {username, message});
+            io.to(roomId).emit('receive_message', {username, message, total: rooms[roomId].total});
         });
 
         // ユーザーが部屋から退出する処理
