@@ -29,26 +29,30 @@ app.prepare().then(() => {
                     if(!rooms[roomId].users) {
                         rooms[roomId].users = [];
                     }
-                    //ユーザー情報の追加
-                    rooms[roomId].users.push({ socketId: socket.id, username, message: '' });
-                    socket.join(roomId);
-                    // const lastUser = rooms[roomId].users[rooms[roomId].users.length - 1].username;
-                    // const lastUserSocketId = rooms[roomId].users[rooms[roomId].users.length - 1].socketId;
-                    io.to(roomId).emit('user_connected',  (rooms[roomId].users));
-        
-                    callback({ success: true });
+                    console.log('定員:', rooms[roomId].capacity);
+                    console.log('現在の人数:', rooms[roomId].users.length);
+                    console.log(rooms[roomId].users.length < rooms[roomId].capacity);
+                    if (rooms[roomId].users.length < rooms[roomId].capacity) {
+                        //ユーザー情報の追加
+                        rooms[roomId].users.push({ socketId: socket.id, username, message: '' });
+                        socket.join(roomId);
+                        io.to(roomId).emit('user_connected',  (rooms[roomId].users));
+            
+                        callback({ success: true });
+                    } else {
+                        callback({ success: false, message: '定員に達しています' });
+                    }
                 } else {
-                    callback({ success: false, message: 'Incorrect password' });
+                    callback({ success: false, message: 'パスワードが違います' });
                 } 
             } else {
-                callback({ success: false, message: 'Room not found' });
+                callback({ success: false, message: '部屋が見つかりません' });
             }
         });
 
         // 部屋の作成処理
         socket.on('create_room', ({ roomId, username, roomStack, roomMember, password }) => {
-            rooms[roomId] = { password: password, users: [{ socketId: socket.id, username, message: '' }] };
-            console.log('やっぱり確認なのだ', rooms[roomId].users);
+            rooms[roomId] = { password: password, stack: roomStack, capacity: Number(roomMember), users: [{ socketId: socket.id, username, message: '' }] };
             io.to(roomId).emit('user_connected', rooms[roomId].users);
             socket.join(roomId);
             console.log(`Room ${roomId} created`);
