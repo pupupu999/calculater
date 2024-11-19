@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 import { useRouter } from "next/router";
+import Header from "@/components/Header";
 
 
 
@@ -85,6 +86,7 @@ const loginUser = async () => {
 return (
     <div className={styles.background}>
     <div>
+        <Header />
         <h1>Login</h1>
         {!logined ? (
             <div className = {styles.background}>
