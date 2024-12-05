@@ -1,15 +1,17 @@
 import styles from '@/styles/style.module.css';
-import Header from "@/components/Header";
 import MyLineChart from "@/components/LineChart";
+import Table from "@/components/Table";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/pages/firebase";
 import React, { useEffect, useState } from 'react';
+import Score from '@/components/Score';
 
 
-export default function Record() {
+const Record = () => {
     const [username, setUsername] = useState('');
     const [users, setUsers] = useState([]);
     const [data, setData] = useState([]);
+    const [scoreData, setScoreData] = useState([]);
     useEffect(() => {
         const userid = sessionStorage.getItem('userid');
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
@@ -21,6 +23,7 @@ export default function Record() {
                     if (docSnap.exists()) {
                         setUsername(docSnap.data().userid);
                         setUsers([{username: docSnap.data().userid, message: ''}]);
+                        setScoreData(docSnap.data().results.count);
                         const formattedData = docSnap.data().results.day_value.map((item) => ({
                             // タイムスタンプを日付に変換
                             ...item,
@@ -46,12 +49,16 @@ export default function Record() {
     return (
         <div>
             <div className={styles.background}>
-            <Header />
-            <h1>{username}</h1>
-            <MyLineChart 
-                data = {data}
-            />
+                    <MyLineChart 
+                        data = {data}
+                    />
+                    <Score
+                        scoreData = {scoreData}
+                    />
+                    <Table />
             </div>
         </div>
     );
-    }
+};
+
+export default Record;
