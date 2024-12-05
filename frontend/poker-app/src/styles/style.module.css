@@ -1,29 +1,32 @@
 .background {
-   background-color: #27374D;
+   background-color: #f5f5f5;
+   background-size: cover; /* 画像を縮尺して全体をカバー */
+   background-repeat: no-repeat; /* 画像の繰り返しを防止 */
+   background-position: center; /* 画像を中央揃え */
    min-height: 100vh;
    margin: 0;
-   padding: 0;
+   padding-top: 60px;
 }
 
 .username {
    float:left;
    font-size: 40px;
-   padding: 30px;
-   color: #ffffff;
+   padding: 15px;
+   color: #121212;
 }
 
 .userid {
    float:right;
    font-size: 20px;
    padding: 10px;
-   color: #ffffff;
+   color: #121212;
 }
 
 .line {
    width: 95%;
    border: 0;
-   height: 1px;
-   background: #ffffff;
+   height: 3px;
+   background: #121212;
    @media screen and (max-width: 706px) {
       margin-bottom: 80px;
    }
@@ -32,14 +35,29 @@
    margin-right: auto;
 }
 
+.main {
+   display: flex;
+}
+
+.title {
+   margin: 0 auto;
+}
+
+.record {
+   width: 50%;
+}
+
+.kurupin {
+   padding-left: 3%;
+}
+
 .button_row {
    display: flex;
    align-items: stretch;
-   justify-content: space-around;
    @media screen and (max-width: 706px) {
       padding: 20px 10px;
    }
-   padding: 20px 0;
+   padding:20px 0;
    text-align: center;
 }
 
@@ -47,15 +65,8 @@
    @media screen and (max-width: 706px) {
       max-width: 40%;
    }
-   max-width: 24%;
-   margin: 0 20px;
-}
-
-.image_container_bottom {
-   @media screen and (max-width: 706px) {
-      max-width: 40%;
-   }
-   max-width: 24%;
+   max-width: 80%;
+   margin: 20% 20px;
 }
 
 .image_container_topcenter img {
@@ -123,20 +134,24 @@
 
 .header {
    display: flex;
+   position: fixed; /* 固定配置 */
+   top: 0; /* 上端に配置 */
+   left: 0; /* 左端に配置 */
+   width: 100%; /* 横幅を画面いっぱいに設定 */
+   z-index: 1000; /* 他の要素の上に配置 */
    justify-content: space-between;
    align-items: center;
    background-color: #333;
    padding: 10px 20px;
    color: white;
+   height: 70px;
 }
 
-.logo h1 {
+.logo {
    margin: 0;
-}
-
-.nav {
-   display: flex;
-   gap: 20px;
+   height: 100%;
+   max-height: 100%;
+   object-fit: contain;
 }
 
 .nav ul {
@@ -144,6 +159,15 @@
    display: flex;
    margin: 0;
    padding: 0;
+   gap: 10%;
+}
+
+.nav li {
+   display: inline-block;
+}
+
+.nav li:hover {
+   border-bottom: 2px solid white;
 }
 
 .nav li a {
@@ -151,13 +175,6 @@
    text-decoration: none;
 }
 
-.hamburger {
-   display: none;
-   cursor: pointer;
-}
-
- /* スマートフォン用 */
-@media (max-width: 768px) {
 .nav {
    display: none;
    flex-direction: column;
@@ -176,4 +193,60 @@
    display: block;
    font-size: 24px;
 }
+
+.chart {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.score {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   flex-flow: column;
+}
+
+.content {
+   border-bottom: 1px solid #ccc;
+   color:#121212;
+}
+
+.tableContainer {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   margin-top: 5%;
+}
+
+.table {
+   width: 80%;
+   border-collapse: collapse;
+   font-size: 18px;
+   color: #121212;
+}
+
+.table th,
+.table td {
+   padding: 12px 15px;
+   text-align: center;
+}
+
+.table th {
+   background-color: #413F3F; /* ヘッダー背景色 */
+   font-weight: bold;
+   color: white;
+   border: 3px solid #DDE6ED; /* セルの境界線 */
+}
+
+.table tr {
+   background-color: #AAAAAA; /* 偶数行の色 */
+}
+
+.table tr:nth-child(odd) {
+   background-color: #ffffff; /* 奇数行の色 */
+}
+
+.table td {
+   border: 3px solid #DDE6ED; /* セルの境界線 */
 }

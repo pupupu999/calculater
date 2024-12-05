@@ -87,9 +87,9 @@ return (
     <div className={styles.background}>
     <div>
         <Header />
-        <h1>Login</h1>
         {!logined ? (
             <div className = {styles.background}>
+                <h1>Login</h1>
                 <button onClick={handleGoogleLogin}>Login with Google</button>
                 <input 
                     type="text"

@@ -1,10 +1,10 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import styles from '@/styles/style.module.css';
 
 const MyLineChart = ({data}) => {
     console.log("データの確認",data);
     return (
-        <div>
-            <h1>戦績折れ線チャート</h1>
+        <div className = {styles.chart}>
             {data.length > 0 ? (
                 <LineChart width={600} height={300} data={data}>
                     <CartesianGrid strokeDasharray="3 3" fill='#ffffff'/>
