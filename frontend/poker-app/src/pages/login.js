@@ -12,7 +12,7 @@ const [userid, setUserid] = useState('');
 const [password, setPassword] = useState('');
 const [logined, setLogined] = useState(false);
 
-    const router = useRouter();
+const router = useRouter();
 
 const handleGoogleLogin = async () => {
     try {
@@ -84,9 +84,7 @@ const loginUser = async () => {
     };
 
 return (
-    <div className={styles.background}>
     <div>
-        <Header />
         {!logined ? (
             <div className = {styles.background}>
                 <h1>Login</h1>
@@ -107,13 +105,13 @@ return (
                 <button onClick={loginUser}>Login</button>
             </div>
         ) : (
-            <>
+            <div className = {styles.background}>
+                <Header />
                 <h2>Welcome, you are logged in!</h2>
                 <button onClick={goToCreateRoom}>Create Room</button>
                 <button onClick={goToJoinRoom}>Join Room</button>
-            </>
+            </div>
         )}
-    </div>
     </div>
 );
 }
