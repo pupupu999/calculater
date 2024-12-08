@@ -50,7 +50,9 @@ export default function Home() {
       ) : (
         <div>
           <h1>Please login</h1>
-          <button onClick={goToLogin}>Go to Login</button> {/* ボタンをクリックでloginページに遷移 */}
+          <div className = {styles.loginloc}>
+            <button className = {styles.loginbutton} onClick={goToLogin}>Login</button> 
+          </div>
         </div>
       )}
     </div>

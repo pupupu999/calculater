@@ -16,6 +16,7 @@ const Record = () => {
         const userid = sessionStorage.getItem('userid');
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
         if(cleanedUserid) {
+            
             const fetchUserInfo = async () => {
                 try {
                     const docRef = doc(db, 'users', cleanedUserid);
