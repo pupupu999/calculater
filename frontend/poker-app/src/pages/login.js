@@ -1,12 +1,8 @@
 import styles from "@/styles/style.module.css";
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
 import { auth, googleProvider } from './firebase';
 import { useRouter } from "next/router";
-import Header from "@/components/Header";
-import Record from "@/components/BattleRecord";
-
-
 
 export default function Login() {
     const [userid, setUserid] = useState('');
@@ -46,7 +42,7 @@ export default function Login() {
             const data = await response.json();
             alert(data.message);
             sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
-            setLogined(true);
+            sessionStorage.setItem('login', JSON.stringify(true));
             handleNavigation('/mypage');
         } catch (error) {
             console.error('Error registering user:', error);
@@ -68,6 +64,7 @@ export default function Login() {
             if (data.message === 'Login successful!') {
                 alert('ログイン成功');
                 sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
+                sessionStorage.setItem('login', JSON.stringify(true));
                 setLogined(true);
                 handleNavigation('/mypage');
             } else {

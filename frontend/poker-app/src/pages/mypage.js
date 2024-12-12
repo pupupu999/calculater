@@ -12,7 +12,19 @@ const MyPage = () => {
     const [users, setUsers] = useState([]);
     const [data, setData] = useState([]);
     const [scoreData, setScoreData] = useState([]);
+    const [login, setLogin] = useState(false);
+
     useEffect(() => {
+        const logined = sessionStorage.getItem('login');
+        setLogin(logined);
+        console.log("ログイン状態mae",logined);
+        if(!login) {
+            console.log("ログインしていません",login);
+            setUsername('Guest');
+            return;
+        }
+        console.log("ログイン状態",login);
+        console.log("ユーザーネーム確認",username);
         const userid = sessionStorage.getItem('userid');
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
         if(cleanedUserid) {
@@ -22,7 +34,6 @@ const MyPage = () => {
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         setUsername(docSnap.data().userid);
-                        console.log('ユーザーネームの確認や',docSnap.data().userid);
                         setUsers([{username: docSnap.data().userid, message: ''}]);
                         setScoreData(docSnap.data().results.count);
                         const formattedData = docSnap.data().results.day_value.map((item) => ({
@@ -45,13 +56,18 @@ const MyPage = () => {
             console.log("ユーザー情報がありません。ログインしてください。");
             window.location.href = '/login';
         }
-    }, []);
+    }, [login]);
 
     const handleNavication = (path) => {
-        router.push(path);
+        if(login) {
+            router.push(path);
+        } else {
+            router.push('/login');
+        }
     }
 
     return (
+
         <div className={styles.background}>
             <Header />
             <span className={styles.username}>{username}</span>
@@ -71,7 +87,7 @@ const MyPage = () => {
                     </div>
                 </div>
                 <div className = {styles.record}>
-                    <Record />
+                    <Record login = {login}/>
                 </div>
             </div>
             <div className={styles.footer}></div>
