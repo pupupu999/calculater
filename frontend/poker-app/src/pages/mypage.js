@@ -19,7 +19,6 @@ const MyPage = () => {
         setLogin(logined);
         console.log("ログイン状態mae",logined);
         if(!login) {
-            console.log("ログインしていません",login);
             setUsername('Guest');
             return;
         }
