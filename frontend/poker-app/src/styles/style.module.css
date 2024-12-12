@@ -12,6 +12,7 @@
    float:left;
    font-size: 40px;
    padding: 15px;
+   margin-left: 30px;
    color: #121212;
 }
 
@@ -249,4 +250,14 @@
 
 .table td {
    border: 3px solid #DDE6ED; /* セルの境界線 */
+}
+
+.loginloc {
+   padding: 30% 50%;
+}
+
+.loginbutton {
+   padding: 40px 70px;
+   border-radius: 10px;
+   font-size: large;
 }

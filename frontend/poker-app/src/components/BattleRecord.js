@@ -7,15 +7,21 @@ import React, { useEffect, useState } from 'react';
 import Score from '@/components/Score';
 
 
-const Record = () => {
+const Record = ({login}) => {
+    const sampleData = [{chip:100, date:2024-1-1},{chip:-400,date:2024-1-2},{chip:200,date:2024-1-3}]
+    const sampleCount = {losses:5,wins:5,games:10}
+
     const [username, setUsername] = useState('');
     const [users, setUsers] = useState([]);
     const [data, setData] = useState([]);
     const [scoreData, setScoreData] = useState([]);
+    console.log("ログイン状態",login);
     useEffect(() => {
+        if (!login) return;
         const userid = sessionStorage.getItem('userid');
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
         if(cleanedUserid) {
+            
             const fetchUserInfo = async () => {
                 try {
                     const docRef = doc(db, 'users', cleanedUserid);
@@ -44,11 +50,13 @@ const Record = () => {
             console.log("ユーザー情報がありません。ログインしてください。");
             window.location.href = '/login';
         }
-    }, []);
+    }, [login]);
 
     return (
         <div>
             <div className={styles.background}>
+                {login ? (
+                    <>
                     <MyLineChart 
                         data = {data}
                     />
@@ -56,6 +64,18 @@ const Record = () => {
                         scoreData = {scoreData}
                     />
                     <Table />
+                    </>
+                ) : (
+                    <>
+                    <MyLineChart 
+                        data = {sampleData}
+                    />
+                    <Score
+                        scoreData = {sampleCount}
+                    />
+                    <Table />
+                    </>
+                )}
             </div>
         </div>
     );

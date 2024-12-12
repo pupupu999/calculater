@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/pages/firebase";
+import { useRouter } from 'next/router';
 
 let socket;
 
@@ -15,10 +16,22 @@ export default function JoinRoom() {
     const [users, setUsers] = useState([]);
     const [joined, setJoined] = useState(false);
     const [total, setTotal] = useState(0);
+    const [login, setLogin] = useState(false);
+    const router = useRouter();
+
+    const handleNavigation = (path) => {
+        router.push(path);
+    }
+
 
     useEffect(() => {
+        const logined = sessionStorage.getItem('login');
+        setLogin(logined);
+        if(!login) {
+            handleNavigation('/login');
+            return;
+        }
         const userid = sessionStorage.getItem('userid');
-
         const cleanedUserid = userid.trim().replace(/['"]+/g, '');
         if(cleanedUserid) {
             const fetchUserInfo = async () => {
