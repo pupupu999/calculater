@@ -28,33 +28,16 @@ export default function Home() {
     });
   };
 
-  const goToLogin = () => {
-    router.push("/login");
-  };
-
-  const goToCreateRoom = () => {
-    router.push("/CreateRoom");
+  const handleNavigation = (path) => {
+    router.push(path);
   }
 
   return (
-    <div>
-      {user ? (
-        <div className={styles.background}>
-          <Header />
-          <div>
-            <h1>Welcome, {user.displayName}</h1>
-            <button onClick={handleLogout}>Logout</button>
-            <button onClick={goToCreateRoom}>Create Room</button>
-          </div>
-        </div>
-      ) : (
-        <div>
-          <h1>Please login</h1>
-          <div className = {styles.loginloc}>
-            <button className = {styles.loginbutton} onClick={goToLogin}>Login</button> 
-          </div>
-        </div>
-      )}
+    <div className = {styles.titleBackground}>
+      <Header />
+      <div className = {styles.titleContent}>
+        <button className = {styles.titleButton} onClick={() => handleNavigation('/login')}>Login</button>
+      </div>
     </div>
   );
-}
+};
