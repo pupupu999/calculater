@@ -27,8 +27,9 @@ export default function CreateRoom() {
 
     useEffect(() => {
         const logined = sessionStorage.getItem('login');
-        setLogin(logined);
-        if(!login) {
+        const loglog = Boolean(logined);
+        setLogin(loglog);
+        if(!loglog) {
             handleNavigation('/login');
             return;
         }
@@ -101,6 +102,11 @@ export default function CreateRoom() {
         setMessage('');
     };
 
+    const recordData = () => {
+        console.log('Emitting save_score with users:', users);
+        socket.emit('save_score', { users });
+    }
+
     return (
         <div className={styles.background}>
         <Header />
@@ -159,6 +165,7 @@ export default function CreateRoom() {
                         </div>
                     ))}
                 </div>
+                <button onClick={recordData} >確定</button>
                 <button onClick={deleteRoom}>Delete Room</button>
             </div>
             )}

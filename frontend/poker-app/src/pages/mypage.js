@@ -57,8 +57,9 @@ const MyPage = () => {
         }
     }, [login]);
 
-    const handleNavication = (path) => {
-        if(login) {
+    const handleNavigation = (path) => {
+        console.log("ログイン状態おおおおお",Boolean(login));
+        if(Boolean(login)) {
             router.push(path);
         } else {
             router.push('/login');
@@ -78,10 +79,10 @@ const MyPage = () => {
                     </div>
                     <div className={styles.button_row}>
                         <div className={styles.image_container_topcenter}>
-                            <img src="/img/room_cre.png" alt="create room" onClick={() => handleNavication('/CreateRoom')} />
+                            <img src="/img/room_cre.png" alt="create room" onClick={() => handleNavigation('/CreateRoom')} />
                         </div>
                         <div className={styles.image_container_topcenter}>
-                            <img src="/img/room_ser.png" alt="search room" onClick={() => handleNavication('/JoinRoom')} />
+                            <img src="/img/room_ser.png" alt="search room" onClick={() => handleNavigation('/JoinRoom')} />
                         </div>
                     </div>
                 </div>

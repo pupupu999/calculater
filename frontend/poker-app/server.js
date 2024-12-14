@@ -22,6 +22,11 @@ app.prepare().then(() => {
     io.on('connection', (socket) => {
         console.log('User connected', socket.id);
 
+        // すべてのイベントをログに記録(確認用)
+        socket.onAny((event, ...args) => {
+            console.log(`受信イベント: ${event}`, args);
+        });
+
         // ユーザーが部屋に参加する処理
         socket.on('join_room', async ({ roomId, username, password }, callback) => {
             if (rooms[roomId]) {
@@ -92,6 +97,50 @@ app.prepare().then(() => {
             }
         });
 
+        // ユーザーそれぞれのスコアを保存する処理
+        socket.on('save_score', async ({ users }) => {
+            console.log('とうろくかいし', users);
+            try {
+                users.forEach(async (user) => {
+                    const currentDate = Timestamp.now();
+                    const docRef = doc(db, 'users', user.username);
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        const prevData = docSnap.data().results.day_value;
+                        const newData = [...prevData, { date: currentDate, chip: user.message }];
+                        const prevTotal = docSnap.data().results.total_chips;
+                        const newTotal = prevTotal + Number(user.message);
+                        const prevScore = docSnap.data().results.count.games;
+                        const prevWins = docSnap.data().results.count.wins;
+                        const prevlosses = docSnap.data().results.count.losses;
+                        const newScore = prevScore + 1;
+                        if (Number(user.message) < 0) {
+                            const newLosses = prevlosses + 1;
+                            const newWins = prevWins;
+                        } else {
+                            const newWins = prevWins + 1;
+                            const newLosses = prevlosses;
+                        }
+                        await setDoc(docRef, {
+                            results: {
+                                day_value: newData,
+                                total_chips: newTotal,
+                                count: {
+                                    games: newScore,
+                                    wins: newWins,
+                                    losses: newLosses
+                                }
+                            }
+                        }, { merge: true });
+                    } else {
+                        console.log("ユーザー情報が見つかりません!");
+                    }
+                });
+            } catch (error) {
+                console.error("スコア保存中にエラーが発生しました！", error);
+            }
+        });
+
         socket.on('disconnect', () => {
             // 切断されたユーザーを各ルームから削除
             for (const roomId in rooms) {
@@ -107,9 +156,9 @@ app.prepare().then(() => {
     });
 
   // サーバーを指定ポートで起動
-  const PORT = process.env.PORT || 3001;
-  server.listen(PORT, (err) => {
-    if (err) throw err;
-    console.log(`Server is running on http://localhost:${PORT}`);
-  });
+    const PORT = process.env.PORT || 3001;
+    server.listen(PORT, (err) => {
+        if (err) throw err;
+        console.log(`Server is running on http://localhost:${PORT}`);
+    });
 });
