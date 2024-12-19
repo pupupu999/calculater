@@ -7,7 +7,7 @@
 }
 
 .titleBackground {
-   background-image:url('/img/tallies.png');
+   background-image:url('../../public/img/tallies.png');
    min-height: 100vh;
    margin-top: 60px;
    background-size: cover; /* 画像を縮尺して全体をカバー */

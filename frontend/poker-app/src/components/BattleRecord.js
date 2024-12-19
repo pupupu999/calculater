@@ -1,10 +1,10 @@
-import styles from '@/styles/style.module.css';
-import MyLineChart from "@/components/LineChart";
-import Table from "@/components/Table";
+import styles from '../styles/style.module.css';
+import MyLineChart from "./LineChart.js";
+import Table from "./Table.js";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/pages/firebase";
+import { db } from "../pages/firebase.js";
 import React, { useEffect, useState } from 'react';
-import Score from '@/components/Score';
+import Score from './Score.js';
 
 
 const Record = ({login}) => {

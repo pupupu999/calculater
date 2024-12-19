@@ -1,18 +1,18 @@
-import styles from "@/styles/style.module.css";
+import styles from "../styles/style.module.css";
 import React, { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from './firebase';
-import { useRouter } from "next/router";
+import { auth, googleProvider } from './firebase.js';
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
     const [userid, setUserid] = useState('');
     const [password, setPassword] = useState('');
     const [logined, setLogined] = useState(false);
 
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const handleNavigation = (path) => {
-        router.push(path);
+        navigate(path);
     }
 
     const handleGoogleLogin = async () => {

@@ -1,10 +1,10 @@
-import Header from "@/components/Header";
-import styles from "@/styles/style.module.css";
+import Header from "../components/Header.js";
+import styles from "../styles/style.module.css";
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/pages/firebase";
-import { useRouter } from 'next/router';
+import { db } from "./firebase.js";
+import { useNavigate } from 'react-router-dom';
 
 let socket;
 
@@ -19,10 +19,10 @@ export default function CreateRoom() {
     const [joined, setJoined] = useState(false);
     const [total, setTotal] = useState(0);
     const [login, setLogin] = useState(false);
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const handleNavigation = (path) => {
-        router.push(path);
+        navigate(path);
     };
 
     useEffect(() => {

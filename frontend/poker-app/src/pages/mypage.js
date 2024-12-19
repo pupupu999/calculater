@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/pages/firebase";
-import styles from '@/styles/style.module.css';
-import Header from "@/components/Header";
-import Record from "@/components/BattleRecord";
-import { useRouter } from 'next/router';
+import { db } from "./firebase.js";
+import styles from '../styles/style.module.css';
+import Header from "../components/Header.js";
+import Record from "../components/BattleRecord.js";
+import { useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
-    const router = useRouter();
+    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [users, setUsers] = useState([]);
     const [data, setData] = useState([]);
@@ -60,9 +60,9 @@ const MyPage = () => {
     const handleNavigation = (path) => {
         console.log("ログイン状態おおおおお",Boolean(login));
         if(Boolean(login)) {
-            router.push(path);
+            navigate(path);
         } else {
-            router.push('/login');
+            navigate('/login');
         }
     }
 

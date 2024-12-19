@@ -1,13 +1,26 @@
-import styles from "@/styles/style.module.css";
-import React, { useEffect, useState } from 'react';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { auth } from './firebase';
-import { useRouter } from "next/router";
-import Header from '@/components/Header';
+import styles from "../styles/style.module.css";
+import React, { useEffect, useState } from "react";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { onAuthStateChanged, signOut } from "firebase/auth";
+import { auth } from "./firebase.js"; // firebaseファイルの正しいパスを指定
+import Header from "../components/Header.js";
+import Login from "./login.js";
 
-export default function Home() {
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+      </Routes>
+    </Router>
+  );
+}
+
+// Homeコンポーネント
+function Home() {
   const [user, setUser] = useState(null);
-  const router = useRouter();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -21,23 +34,27 @@ export default function Home() {
   }, []);
 
   const handleLogout = () => {
-    signOut(auth).then(() => {
-      console.log("Logged out");
-    }).catch((error) => {
-      console.error("Error during logout:", error);
-    });
+    signOut(auth)
+      .then(() => {
+        console.log("Logged out");
+      })
+      .catch((error) => {
+        console.error("Error during logout:", error);
+      });
   };
 
   const handleNavigation = (path) => {
-    router.push(path);
-  }
+    navigate(path);
+  };
 
   return (
-    <div className = {styles.titleBackground}>
+    <div className={styles.titleBackground}>
       <Header />
-      <div className = {styles.titleContent}>
-        <button className = {styles.titleButton} onClick={() => handleNavigation('/login')}>Login</button>
+      <div className={styles.titleContent}>
+        <button className={styles.titleButton} onClick={() => handleNavigation("/login")}>
+          Login
+        </button>
       </div>
     </div>
   );
-};
+}

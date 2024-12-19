@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
-import { useRouter } from 'next/router'; 
-import styles from '@/styles/style.module.css'; 
+import { useNavigate } from 'react-router-dom'; 
+import styles from '../styles/style.module.css'; 
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const toggleMenu = () => {
         setMenuOpen(!menuOpen);
@@ -12,7 +12,7 @@ const Header = () => {
 
     const handleNavigation = (path) => {
         setMenuOpen(false); 
-        router.push(path); 
+        navigate(path);
     };
 
     return (
