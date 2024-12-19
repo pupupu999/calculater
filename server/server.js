@@ -5,6 +5,7 @@ import { db } from '../frontend/poker-app/src/pages/firebase.js';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import auth from './auth.js';
 
 let rooms = {}; // 各ルームIDにパスワードを保持
 
@@ -14,6 +15,12 @@ const __dirname = path.dirname(__filename);
 
 // Express アプリケーションを作成
 const app = express();
+
+//ミドルウェアの設定
+app.use(express.json());
+
+// ルーティングの設定
+app.use('/api/auth', auth);
 
 // 静的ファイルの配信設定
 app.use(express.static(path.join(__dirname, '../frontend/poker-app/build')));
