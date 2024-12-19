@@ -27,7 +27,8 @@ if (req.method === 'POST') {
         res.status(401).json({ message: 'Invalid password' });
     }
     } catch (error) {
-    res.status(500).json({ message: 'Error during login', error: error.message });
+        console.error('API Error:', error); // エラー内容をログに出力
+        res.status(500).json({ message: 'Error during login', error: error.message });
     }
 } else {
     res.status(405).json({ message: 'Method not allowed' });

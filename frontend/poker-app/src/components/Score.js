@@ -1,4 +1,4 @@
-import styles from '@/styles/style.module.css';
+import styles from '../styles/style.module.css';
 
 const Score = ({scoreData}) => {
     const winRate = scoreData.wins / scoreData.games * 100;

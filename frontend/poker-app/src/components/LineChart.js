@@ -1,5 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import styles from '@/styles/style.module.css';
+import styles from '../styles/style.module.css';
 
 const MyLineChart = ({data}) => {
     console.log("データの確認",data);
