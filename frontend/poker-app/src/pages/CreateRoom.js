@@ -150,23 +150,23 @@ export default function CreateRoom() {
                 <h2>ROOM ID:{roomId}</h2>
                 <h3>Total</h3>
                 <p>{total}</p>
-                <input
+                <input className={styles.roomInput}
                     type="number"
-                    placeholder="Message"
+                    placeholder="残りスタックを入力してください"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-                <button onClick={sendMessage}>送信する</button>
-                <div>
+                <button className={styles.roomButton} onClick={sendMessage}>送信する</button>
+                <div className={styles.resultsList}>
                     {users.map((user, index) => (
-                        <div key={index}>
+                        <div key={index} className={styles.userItem}>
                             <h3>{user.username}のメッセージ</h3>
                             <p>{user.message}</p>
                         </div>
                     ))}
                 </div>
-                <button onClick={recordData} >確定</button>
-                <button onClick={deleteRoom}>Delete Room</button>
+                <button className={styles.roomButton} onClick={recordData} >確定</button>
+                <button className={styles.roomButton} onClick={deleteRoom}>Delete Room</button>
             </div>
             )}
         </div>

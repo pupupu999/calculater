@@ -1,24 +1,12 @@
 import styles from "../styles/style.module.css";
 import React, { useEffect, useState } from "react";
-import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { auth } from "./firebase.js"; // firebaseファイルの正しいパスを指定
 import Header from "../components/Header.js";
-import Login from "./login.js";
-
-export default function App() {
-  return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-      </Routes>
-    </Router>
-  );
-}
 
 // Homeコンポーネント
-function Home() {
+export default function Home() {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
