@@ -26,8 +26,9 @@ export default function JoinRoom() {
 
     useEffect(() => {
         const logined = sessionStorage.getItem('login');
-        setLogin(logined);
-        if(!login) {
+        const loglog = Boolean(logined);
+        setLogin(loglog);
+        if(!loglog) {
             handleNavigation('/login');
             return;
         }

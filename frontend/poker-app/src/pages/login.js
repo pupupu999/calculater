@@ -34,7 +34,7 @@ export default function Login() {
                 alert('ユーザーIDとパスワードを入力してください');
                 return;
             }
-            const response = await fetch('./api/register.js', {
+            const response = await fetch('/api/auth/regist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userid, password })

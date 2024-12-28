@@ -22,6 +22,7 @@ app.use(express.json());
 // ルーティングの設定
 app.use('/api/auth', auth);
 
+
 // 静的ファイルの配信設定
 app.use(express.static(path.join(__dirname, '../frontend/poker-app/build')));
 
@@ -85,9 +86,10 @@ io.on('connection', (socket) => {
         rooms[roomId].total = 0;
         rooms[roomId].users.forEach((user) => {
             if (user.username === username) {
-                user.message = message;
+                user.message = (Number(message) - rooms[roomId].stack);
+                message = user.message;
             }
-            rooms[roomId].total += (user.message - rooms[roomId].stack);
+            rooms[roomId].total += user.message;
         });
         io.to(roomId).emit('receive_message', { username, message, total: rooms[roomId].total });
     });
@@ -108,9 +110,8 @@ io.on('connection', (socket) => {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const prevData = docSnap.data().results.day_value;
-                    const newData = [...prevData, { date: currentDate, chip: user.message }];
-                    const prevTotal = docSnap.data().results.total_chips;
-                    const newTotal = prevTotal + Number(user.message);
+                    const newTotal = prevData[prevData.length - 1].total_chip + Number(user.message);
+                    const newData = [...prevData, { date: currentDate, chip: user.message, total_chip: newTotal }];
                     const prevScore = docSnap.data().results.count.games;
                     const prevWins = docSnap.data().results.count.wins;
                     const prevLosses = docSnap.data().results.count.losses;
@@ -120,7 +121,6 @@ io.on('connection', (socket) => {
                     await setDoc(docRef, {
                         results: {
                             day_value: newData,
-                            total_chips: newTotal,
                             count: { games: newScore, wins: newWins, losses: newLosses }
                         }
                     }, { merge: true });
