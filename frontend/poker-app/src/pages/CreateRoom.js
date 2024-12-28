@@ -1,10 +1,10 @@
-import Header from "@/components/Header";
-import styles from "@/styles/style.module.css";
+import Header from "../components/Header.js";
+import styles from "../styles/style.module.css";
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/pages/firebase";
-import { useRouter } from 'next/router';
+import { db } from "./firebase.js";
+import { useNavigate } from 'react-router-dom';
 
 let socket;
 
@@ -19,16 +19,17 @@ export default function CreateRoom() {
     const [joined, setJoined] = useState(false);
     const [total, setTotal] = useState(0);
     const [login, setLogin] = useState(false);
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const handleNavigation = (path) => {
-        router.push(path);
+        navigate(path);
     };
 
     useEffect(() => {
         const logined = sessionStorage.getItem('login');
-        setLogin(logined);
-        if(!login) {
+        const loglog = Boolean(logined);
+        setLogin(loglog);
+        if(!loglog) {
             handleNavigation('/login');
             return;
         }
@@ -101,6 +102,11 @@ export default function CreateRoom() {
         setMessage('');
     };
 
+    const recordData = () => {
+        console.log('Emitting save_score with users:', users);
+        socket.emit('save_score', { users });
+    }
+
     return (
         <div className={styles.background}>
         <Header />
@@ -144,22 +150,23 @@ export default function CreateRoom() {
                 <h2>ROOM ID:{roomId}</h2>
                 <h3>Total</h3>
                 <p>{total}</p>
-                <input
+                <input className={styles.roomInput}
                     type="number"
-                    placeholder="Message"
+                    placeholder="残りスタックを入力してください"
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                 />
-                <button onClick={sendMessage}>送信する</button>
-                <div>
+                <button className={styles.roomButton} onClick={sendMessage}>送信する</button>
+                <div className={styles.resultsList}>
                     {users.map((user, index) => (
-                        <div key={index}>
+                        <div key={index} className={styles.userItem}>
                             <h3>{user.username}のメッセージ</h3>
                             <p>{user.message}</p>
                         </div>
                     ))}
                 </div>
-                <button onClick={deleteRoom}>Delete Room</button>
+                <button className={styles.roomButton} onClick={recordData} >確定</button>
+                <button className={styles.roomButton} onClick={deleteRoom}>Delete Room</button>
             </div>
             )}
         </div>

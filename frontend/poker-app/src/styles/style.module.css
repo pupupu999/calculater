@@ -1,11 +1,38 @@
 .background {
    background-color: #f5f5f5;
-   background-size: cover; /* 画像を縮尺して全体をカバー */
-   background-repeat: no-repeat; /* 画像の繰り返しを防止 */
-   background-position: center; /* 画像を中央揃え */
    min-height: 100vh;
    margin: 0;
    padding-top: 60px;
+   color:#121212;
+}
+
+.titleBackground {
+   background-image:url('../../public/img/tallies.png');
+   min-height: 100vh;
+   margin-top: 60px;
+   background-size: cover; /* 画像を縮尺して全体をカバー */
+   background-repeat: no-repeat; /* 画像の繰り返しを防止 */
+   background-position: center; /* 画像を中央揃え */
+}
+
+.titleContent {
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   align-items: center;
+   flex-grow: 1;
+   padding-top: 30%;
+}
+
+.titleButton {
+   padding: 45px 90px;
+   font-size: 32px;
+   font-weight: bold;
+   color: #121212;
+   background-color: #ffffff;
+   border: none;
+   border-radius: 40px;
+   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
 .username {
@@ -260,4 +287,101 @@
    padding: 40px 70px;
    border-radius: 10px;
    font-size: large;
+}
+
+.body {
+   background-color: #ffffff; /* コンテンツ部分の背景色 */
+   border-radius: 10px;
+   padding: 20px;
+   width: 100%;
+   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.roomInput {
+   width: 100%;
+   padding: 10px;
+   font-size: 16px;
+   border: 1px solid #ccc;
+   border-radius: 5px;
+   outline: none;
+   transition: border-color 0.3s;
+}
+
+.roomInput:focus {
+   border-color: #007bff; /* フォーカス時の色 */
+}
+
+.roomButton {
+   padding: 10px;
+   font-size: 16px;
+   background-color: #007bff;
+   color: #ffffff;
+   border: none;
+   border-radius: 5px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+}
+
+.roomButton:hover {
+   background-color: #0056b3;
+}
+
+h2 {
+   font-size: 24px;
+   color: #333;
+   margin-bottom: 10px;
+   text-align: center;
+}
+
+h3 {
+   font-size: 18px;
+   color: #666;
+   margin-bottom: 5px;
+}
+
+p {
+   font-size: 16px;
+   color: #444;
+}
+
+.resultsList {
+   display: flex;
+   flex-direction: column;
+   gap: 10px;
+   margin-top: 20px;
+   max-height: 200px; /* 表示エリアの高さを固定 */
+   overflow-y: auto; /* 縦方向にスクロール可能に設定 */
+   padding-right: 10px; /* スクロールバーが表示された場合の余白調整 */
+   border: 1px solid #ddd; /* 枠線を追加 */
+   border-radius: 5px; /* 枠線を角丸にする */
+   background-color: #f9f9f9; /* 背景色 */
+}
+
+/* スクロールバーのスタイルを変更する場合（オプション） */
+.resultsList::-webkit-scrollbar {
+   width: 8px; /* スクロールバーの幅 */
+}
+
+.resultsList::-webkit-scrollbar-thumb {
+   background: #cccccc; /* スクロールバーの色 */
+   border-radius: 4px; /* 角を丸める */
+}
+
+.resultsList::-webkit-scrollbar-thumb:hover {
+   background: #aaaaaa; /* スクロールバーのホバー時の色 */
+}
+
+.resultsList::-webkit-scrollbar-track {
+   background: #f0f0f0; /* スクロールバーのトラック（背景）の色 */
+}
+
+.userItem {
+   display: flex;
+   justify-content: space-between;
+   align-items: center;
+   padding: 10px;
+   background-color: #f9f9f9;
+   border: 1px solid #ddd;
+   border-radius: 5px;
 }

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "@/pages/firebase";
-import styles from '@/styles/style.module.css';
-import Header from "@/components/Header";
-import Record from "@/components/BattleRecord";
-import { useRouter } from 'next/router';
+import { db } from "./firebase.js";
+import styles from '../styles/style.module.css';
+import Header from "../components/Header.js";
+import Record from "../components/BattleRecord.js";
+import { useNavigate } from 'react-router-dom';
 
 const MyPage = () => {
-    const router = useRouter();
+    const navigate = useNavigate();
     const [username, setUsername] = useState('');
     const [users, setUsers] = useState([]);
     const [data, setData] = useState([]);
@@ -57,11 +57,12 @@ const MyPage = () => {
         }
     }, [login]);
 
-    const handleNavication = (path) => {
-        if(login) {
-            router.push(path);
+    const handleNavigation = (path) => {
+        console.log("ログイン状態おおおおお",Boolean(login));
+        if(Boolean(login)) {
+            navigate(path);
         } else {
-            router.push('/login');
+            navigate('/login');
         }
     }
 
@@ -78,10 +79,10 @@ const MyPage = () => {
                     </div>
                     <div className={styles.button_row}>
                         <div className={styles.image_container_topcenter}>
-                            <img src="/img/room_cre.png" alt="create room" onClick={() => handleNavication('/CreateRoom')} />
+                            <img src="/img/room_cre.png" alt="create room" onClick={() => handleNavigation('/CreateRoom')} />
                         </div>
                         <div className={styles.image_container_topcenter}>
-                            <img src="/img/room_ser.png" alt="search room" onClick={() => handleNavication('/JoinRoom')} />
+                            <img src="/img/room_ser.png" alt="search room" onClick={() => handleNavigation('/JoinRoom')} />
                         </div>
                     </div>
                 </div>

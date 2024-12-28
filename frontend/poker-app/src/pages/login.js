@@ -1,18 +1,18 @@
-import styles from "@/styles/style.module.css";
+import styles from "../styles/style.module.css";
 import React, { useState } from 'react';
 import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from './firebase';
-import { useRouter } from "next/router";
+import { auth, googleProvider } from './firebase.js';
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
     const [userid, setUserid] = useState('');
     const [password, setPassword] = useState('');
     const [logined, setLogined] = useState(false);
 
-    const router = useRouter();
+    const navigate = useNavigate();
 
     const handleNavigation = (path) => {
-        router.push(path);
+        navigate(path);
     }
 
     const handleGoogleLogin = async () => {
@@ -34,7 +34,7 @@ export default function Login() {
                 alert('ユーザーIDとパスワードを入力してください');
                 return;
             }
-            const response = await fetch('/api/register', {
+            const response = await fetch('/api/auth/regist', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userid, password })
@@ -55,7 +55,7 @@ export default function Login() {
                 alert('ユーザーIDとパスワードを入力してください');
                 return;
             }
-            const response = await fetch('/api/login', {
+            const response = await fetch('/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userid, password })
