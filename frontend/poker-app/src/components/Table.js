@@ -1,6 +1,15 @@
 import styles from '../styles/style.module.css';
 
-const Table = () => {
+const Table = ({tData}) => {
+    console.log("テーブルデータ",tData);
+    if (!tData || tData.length === 0) {
+        // データが空の場合のエラーハンドリング
+        return <p>データがありません</p>;
+    }
+
+    // 通算チップを計算するためのロジック
+    let cumulativeChip = 0;
+
     return (
         <div className={styles.tableContainer}>
             <table className={styles.table}>
@@ -12,21 +21,17 @@ const Table = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td>2021/07/01</td>
-                        <td>1000</td>
-                        <td>1000</td>
-                    </tr>
-                    <tr>
-                        <td>2021/07/02</td>
-                        <td>-500</td>
-                        <td>500</td>
-                    </tr>
-                    <tr>
-                        <td>2021/07/03</td>
-                        <td>2000</td>
-                        <td>2500</td>
-                    </tr>
+                    {tData.map((item, index) => {
+                        // 通算チップの計算
+                        cumulativeChip += item.chip;
+                        return (
+                            <tr key={index}>
+                                <td>{item.date}</td>
+                                <td>{item.chip}</td>
+                                <td>{cumulativeChip}</td>
+                            </tr>
+                        );
+                    })}
                 </tbody>
             </table>
         </div>
