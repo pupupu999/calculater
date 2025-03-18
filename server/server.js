@@ -108,7 +108,7 @@ io.on('connection', (socket) => {
                 const currentDate = Timestamp.now();
                 const docRef = doc(db, 'users', user.username);
                 const docSnap = await getDoc(docRef);
-                if (docSnap.exists()) {
+                if (docSnap.exists()&&docSnap.data().results) {
                     const prevData = docSnap.data().results.day_value;
                     const newTotal = prevData[prevData.length - 1].total_chip + Number(user.message);
                     const newData = [...prevData, { date: currentDate, chip: user.message, total_chip: newTotal }];
@@ -118,6 +118,18 @@ io.on('connection', (socket) => {
                     const newScore = prevScore + 1;
                     const newWins = Number(user.message) < 0 ? prevWins : prevWins + 1;
                     const newLosses = Number(user.message) < 0 ? prevLosses + 1 : prevLosses;
+                    await setDoc(docRef, {
+                        results: {
+                            day_value: newData,
+                            count: { games: newScore, wins: newWins, losses: newLosses }
+                        }
+                    }, { merge: true });
+                } else if(docSnap.exists()){
+                    const newTotal = Number(user.message);
+                    const newData = [{ date: currentDate, chip: user.message, total_chip: newTotal }];
+                    const newScore = 1;
+                    const newWins = Number(user.message) < 0 ? 0 : 1;
+                    const newLosses = Number(user.message) < 0 ? 1 : 0;
                     await setDoc(docRef, {
                         results: {
                             day_value: newData,
