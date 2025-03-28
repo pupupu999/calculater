@@ -83,7 +83,7 @@ io.on('connection', (socket) => {
             console.log(`Room ${roomId} deleted`);
         }
     });
-
+    //自身の残りスタックを送信する
     socket.on('message', ({ roomId, username, message }) => {
         rooms[roomId].total = 0;
         rooms[roomId].users.forEach((user) => {
@@ -91,11 +91,11 @@ io.on('connection', (socket) => {
                 user.message = (Number(message) - rooms[roomId].stack);
                 message = user.message;
             }
-            rooms[roomId].total += user.message;
+            rooms[roomId].total += Number(user.message);
         });
         io.to(roomId).emit('receive_message', { username, message, total: rooms[roomId].total });
     });
-
+    //部屋の退室を実行する
     socket.on('leave_room', ({ roomId, username }) => {
         if (rooms[roomId]) {
             rooms[roomId].users = rooms[roomId].users.filter((user) => user.username !== username);
@@ -106,20 +106,24 @@ io.on('connection', (socket) => {
 
     socket.on('save_score', async ({ users }) => {
         try {
+            const newMember = users.map(user => user.username);
             users.forEach(async (user) => {
                 const currentDate = Timestamp.now();
                 const docRef = doc(db, 'users', user.username);
                 const docSnap = await getDoc(docRef);
+                //cloud firestoreにデータを保存する
                 if (docSnap.exists()&&docSnap.data().results) {
+                    //今までの記録がある場合、データを更新する
                     const prevData = docSnap.data().results.day_value;
                     const newTotal = prevData[prevData.length - 1].total_chip + Number(user.message);
-                    const newData = [...prevData, { date: currentDate, chip: user.message, total_chip: newTotal }];
+                    const newData = [...prevData, { date: currentDate, chip: user.message, total_chip: newTotal ,member: newMember}];
                     const prevScore = docSnap.data().results.count.games;
                     const prevWins = docSnap.data().results.count.wins;
                     const prevLosses = docSnap.data().results.count.losses;
                     const newScore = prevScore + 1;
                     const newWins = Number(user.message) < 0 ? prevWins : prevWins + 1;
                     const newLosses = Number(user.message) < 0 ? prevLosses + 1 : prevLosses;
+                    //更新したデータを記録する
                     await setDoc(docRef, {
                         results: {
                             day_value: newData,
@@ -127,8 +131,9 @@ io.on('connection', (socket) => {
                         }
                     }, { merge: true });
                 } else if(docSnap.exists()){
+                    //一回目の記録の場合、そのままその回の記録を保存する
                     const newTotal = Number(user.message);
-                    const newData = [{ date: currentDate, chip: user.message, total_chip: newTotal }];
+                    const newData = [{ date: currentDate, chip: user.message, total_chip: newTotal, member: newMember }];
                     const newScore = 1;
                     const newWins = Number(user.message) < 0 ? 0 : 1;
                     const newLosses = Number(user.message) < 0 ? 1 : 0;

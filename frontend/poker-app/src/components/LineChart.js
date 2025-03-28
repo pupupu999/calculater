@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine} from 'recharts';
 import styles from '../styles/style.module.css';
 
 const MyLineChart = ({data}) => {
@@ -41,6 +41,8 @@ const MyLineChart = ({data}) => {
                     />
                     <Tooltip />
                     <Legend />
+                    {/*y=0の部分だけ太線を表示する*/}
+                    <ReferenceLine y={0} strokeDasharray="black" strokeWidth={1} />
                     <Line type="monotone" dataKey="total_chip" stroke="#82ca9d" />
                 </LineChart>
             ) : (
