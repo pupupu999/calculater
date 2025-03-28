@@ -123,12 +123,15 @@ io.on('connection', (socket) => {
                     const newScore = prevScore + 1;
                     const newWins = Number(user.message) < 0 ? prevWins : prevWins + 1;
                     const newLosses = Number(user.message) < 0 ? prevLosses + 1 : prevLosses;
+                    const prevFriends = docSnap.data().friends;
+                    const newFriends= Array.from(new Set([...prevFriends,...newMember]));
                     //更新したデータを記録する
                     await setDoc(docRef, {
                         results: {
                             day_value: newData,
                             count: { games: newScore, wins: newWins, losses: newLosses }
-                        }
+                        },
+                        friends: newFriends
                     }, { merge: true });
                 } else if(docSnap.exists()){
                     //一回目の記録の場合、そのままその回の記録を保存する
@@ -141,7 +144,8 @@ io.on('connection', (socket) => {
                         results: {
                             day_value: newData,
                             count: { games: newScore, wins: newWins, losses: newLosses }
-                        }
+                        },
+                        friends: newMember
                     }, { merge: true });
                 } else {
                     console.log("ユーザー情報が見つかりません!");
