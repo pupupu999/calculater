@@ -1,6 +1,6 @@
 import styles from '../styles/style.module.css';
 import MyLineChart from "./LineChart.js";
-import Table from "./Table.js";
+import TableFlame from "./Table.js";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../pages/firebase.js";
 import React, { useEffect, useState } from 'react';
@@ -80,7 +80,7 @@ const Record = ({login}) => {
                     <Score
                         scoreData = {scoreData}
                     />
-                    <Table 
+                    <TableFlame 
                         tData={tableData}
                     />
                     </>
@@ -92,7 +92,7 @@ const Record = ({login}) => {
                     <Score
                         scoreData = {sampleCount}
                     />
-                    <Table 
+                    <TableFlame 
                         tData={tableData}
                     />
                     </>

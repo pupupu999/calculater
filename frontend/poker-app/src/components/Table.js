@@ -1,6 +1,8 @@
 import styles from '../styles/style.module.css';
+import { Table } from "antd";
 
-const Table = ({tData}) => {
+
+const TableFlame = ({tData}) => {
     console.log("テーブルデータ",tData);
     if (!tData || tData.length === 0) {
         // データが空の場合のエラーハンドリング
@@ -38,4 +40,4 @@ const Table = ({tData}) => {
     );
 };
 
-export default Table;
+export default TableFlame;
