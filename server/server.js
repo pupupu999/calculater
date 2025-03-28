@@ -75,7 +75,9 @@ io.on('connection', (socket) => {
 
     socket.on('delete_room', ({ roomId }) => {
         if (rooms[roomId]) {
-            delete rooms[roomId];
+            //部屋の情報を削除
+            delete rooms[roomId]
+            //部屋に参加していたユーザーを退室させる
             io.to(roomId).emit('room_deleted');
             io.in(roomId).socketsLeave(roomId);
             console.log(`Room ${roomId} deleted`);
