@@ -5,6 +5,7 @@ const columns=[
     {
         title: "日付",
         dataIndex: "date",
+        sorter: (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime(),
     },
     {
         title: "その日の収支",
