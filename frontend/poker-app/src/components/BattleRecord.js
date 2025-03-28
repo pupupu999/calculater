@@ -1,6 +1,6 @@
 import styles from '../styles/style.module.css';
 import MyLineChart from "./LineChart.js";
-import TableFlame from "./Table.js";
+import TableFlame from "./TableFlame.js";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../pages/firebase.js";
 import React, { useEffect, useState } from 'react';
