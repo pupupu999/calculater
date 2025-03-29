@@ -22,14 +22,22 @@ export const useUser = () => {
                     const docRef = doc(db, 'users', cleanedUserid);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
-                        setUser({
-                            username: docSnap.data().userid,
-                            scoreData: docSnap.data().results.count,
-                            data: docSnap.data().results.day_value.map((item) => ({
-                                ...item,
-                                date: new Date(item.date.seconds * 1000).toLocaleDateString()
-                            }))
-                        });
+                        if(!docSnap.data().results?.count){
+                            setUser({
+                                username: docSnap.data().userid,
+                                scoreData:{},
+                                data: []
+                            });
+                        }else{
+                            setUser({
+                                username: docSnap.data().userid,
+                                scoreData: docSnap.data().results.count,
+                                data: docSnap.data().results.day_value.map((item) => ({
+                                    ...item,
+                                    date: new Date(item.date.seconds * 1000).toLocaleDateString()
+                                }))
+                            });
+                        }
                     } else {
                         console.log("ユーザー情報が見つかりません!");
                     }
