@@ -9,12 +9,12 @@ import Score from './Score.js';
 
 const Record = ({login}) => {
     const sampleData = [{chip:100, date:2024-1-1},{chip:-400,date:2024-1-2},{chip:200,date:2024-1-3}]
-    const sampleCount = {losses:5,wins:5,games:10}
+    const sampleCount = {losses:1,wins:2,games:3}
     
     const [data, setData] = useState([]);
     const [scoreData, setScoreData] = useState([]);
     const [tableData, setTableData] = useState([]);
-    console.log("ログイン状態",login);
+
     useEffect(() => {
         if (!login) return;
         const userid = sessionStorage.getItem('userid');
