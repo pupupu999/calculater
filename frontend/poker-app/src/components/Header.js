@@ -15,6 +15,12 @@ const Header = () => {
         navigate(path);
     };
 
+    const logout = () => {
+        sessionStorage.removeItem('userid');
+        sessionStorage.removeItem('login');
+        navigate('/');
+    }
+
     return (
         <header className={styles.header}>
             <div className={styles.logo}>
@@ -25,6 +31,7 @@ const Header = () => {
                     <li><a onClick= {() => handleNavigation('/mypage')}>Home</a></li>
                     <li><a onClick= {() => handleNavigation('/CreateRoom')}>部屋作成</a></li>
                     <li><a onClick= {() => handleNavigation('/JoinRoom')}>部屋検索</a></li>
+                    <li><a onClick= {() => logout()}>ログアウト</a></li>
                 </ul>
             </nav>
             <div className={styles.hamburger} onClick={toggleMenu}>
