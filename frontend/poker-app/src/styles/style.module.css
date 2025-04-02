@@ -407,3 +407,35 @@ p {
    border: 1px solid #ddd;
    border-radius: 5px;
 }
+
+/*Card.js*/
+.card {
+   display: flex;
+   align-items: center;
+   background-color:#ffffff;
+   border-radius: 40px;
+   border: 5px solid #121212;
+   margin-top: 10px;
+}
+
+.miniCardPlus {
+   margin:0 50px 0 auto;
+   font-size: 80px;
+   font-weight: bold;
+   color: #82ca9d;
+}
+
+.miniCardMinus {
+   margin:0 50px 0 auto;
+   font-size: 80px;
+   font-weight: bold;
+   color: #e02929;
+}
+
+.cardKurupin {
+   position: relative;
+   width:160px;
+   height:160px;
+   bottom: 50px;
+   right: 20px;
+}

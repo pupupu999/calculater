@@ -3,6 +3,7 @@ import styles from '../styles/style.module.css';
 import Header from "../components/Header.js";
 import Record from "../components/BattleRecord.js";
 import Spinner from "../components/Spinner.js"
+import Card from "../components/Card.js";
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../hooks/useUser.js";
 
@@ -30,7 +31,7 @@ const MyPage = () => {
             <div className={styles.main}>
                 <div className={styles.title}>
                     <div className={styles.kurupin}>
-                        <img src="/img/kurupin.png" alt="kurupin" />
+                        <Card currentChip={(!isLoggedIn||(!user.data||user.data.length==0)) ? 0 : user.data[user.data.length-1].total_chip}/>
                     </div>
                     <div className={styles.button_row}>
                         <div className={styles.image_container_topcenter}>
