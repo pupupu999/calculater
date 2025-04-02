@@ -46,7 +46,6 @@ const MyPage = () => {
                     <Record login = {isLoggedIn}/>
                 </div>
             </div>
-            <div className={styles.footer}></div>
         </div>
     );
 };

@@ -7,6 +7,8 @@
 }
 
 .titleBackground {
+   background-color: #ffffff;
+   overscroll-behavior: contain;
    background-image:url('../../public/img/tallies_laptop.png');
    min-height: 100vh;
    margin-top: 60px;
@@ -438,4 +440,12 @@ p {
    height:160px;
    bottom: 50px;
    right: 20px;
+}
+
+/*RankingCard.js*/
+.rankingCard {
+   display: flex;
+   align-items: center;
+   background-color:#AAAAAA;
+   border-radius: 40px;
 }
