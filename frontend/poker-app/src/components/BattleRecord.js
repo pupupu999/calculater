@@ -1,6 +1,6 @@
 import styles from '../styles/style.module.css';
 import MyLineChart from "./LineChart.js";
-import Table from "./Table.js";
+import TableFlame from "./TableFlame.js";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../pages/firebase.js";
 import React, { useEffect, useState } from 'react';
@@ -8,13 +8,18 @@ import Score from './Score.js';
 
 
 const Record = ({login}) => {
-    const sampleData = [{chip:100, date:2024-1-1},{chip:-400,date:2024-1-2},{chip:200,date:2024-1-3}]
-    const sampleCount = {losses:5,wins:5,games:10}
+    const sampleData = [{total_chip:100, date:2024-1-1},{total_chip:-400,date:2024-1-2},{total_chip:200,date:2024-1-3}];
+    const sampleCount = {losses:1,wins:2,games:3};
+    const sampleTable = [
+        {chip:100,total_chip:100, date:2024-1-1},
+        {chip:-500,total_chip:-400,date:2024-1-2},
+        {chip:600,total_chip:200,date:2024-1-3}
+    ];
     
     const [data, setData] = useState([]);
     const [scoreData, setScoreData] = useState([]);
     const [tableData, setTableData] = useState([]);
-    console.log("ログイン状態",login);
+
     useEffect(() => {
         if (!login) return;
         const userid = sessionStorage.getItem('userid');
@@ -25,12 +30,14 @@ const Record = ({login}) => {
                     const docRef = doc(db, 'users', cleanedUserid);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
-                        setScoreData(docSnap.data().results.count);
-                        const formattedData = docSnap.data().results.day_value.map((item) => ({
-                            // タイムスタンプを日付に変換
-                            ...item,
-                            date: new Date(item.date.seconds * 1000).toLocaleDateString() // 'seconds'を使用して変換
-                        }));
+                        if(docSnap.data().results?.count){
+                            setScoreData(docSnap.data().results.count);
+                            const formattedData = docSnap.data().results.day_value.map((item) => ({
+                                // タイムスタンプを日付に変換
+                                ...item,
+                                date: new Date(item.date.seconds * 1000).toLocaleDateString() // 'seconds'を使用して変換
+                            }));
+
                             setData(formattedData);
 
                             const groupedData = {};
@@ -53,6 +60,7 @@ const Record = ({login}) => {
                             const aggregatedData = Object.values(groupedData);
                             console.log("aggregatedData",aggregatedData);
                             setTableData(aggregatedData);
+                        }
                     } else {
                         console.log(docSnap.data());
                         console.log("ユーザー情報が見つかりません!");
@@ -80,7 +88,7 @@ const Record = ({login}) => {
                     <Score
                         scoreData = {scoreData}
                     />
-                    <Table 
+                    <TableFlame 
                         tData={tableData}
                     />
                     </>
@@ -92,8 +100,8 @@ const Record = ({login}) => {
                     <Score
                         scoreData = {sampleCount}
                     />
-                    <Table 
-                        tData={tableData}
+                    <TableFlame 
+                        tData={sampleTable}
                     />
                     </>
                 )}

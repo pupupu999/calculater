@@ -1,63 +1,39 @@
 import Header from "../components/Header.js";
+import Spinner from "../components/Spinner.js";
 import styles from "../styles/style.module.css";
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "./firebase.js";
 import { useNavigate } from 'react-router-dom';
+import { useUser } from "../hooks/useUser.js";
 
 let socket;
 
 export default function CreateRoom() {
     const [roomId, setRoomId] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
     const [roomStack, setRoomStack] = useState('');
     const [roomMember, setRoomMember] = useState('');
     const [message, setMessage] = useState('');
-    const [users, setUsers] = useState([]);
     const [joined, setJoined] = useState(false);
     const [total, setTotal] = useState(0);
-    const [login, setLogin] = useState(false);
     const navigate = useNavigate();
 
     const handleNavigation = (path) => {
         navigate(path);
     };
 
+    const { user, isLoggedIn, loading } = useUser();
+    const[users, setUsers] = useState(user ? [{username: user.username, message: ''}] : []);
+
     useEffect(() => {
-        const logined = sessionStorage.getItem('login');
-        const loglog = Boolean(logined);
-        setLogin(loglog);
-        if(!loglog) {
-            handleNavigation('/login');
+        //ローディング中に処理を進めないようにする
+        if(loading) return;
+
+        if(!isLoggedIn){
+            navigate('/login');
             return;
         }
 
-        const userid = sessionStorage.getItem('userid');
-        const cleanedUserid = userid.trim().replace(/['"]+/g, '');
-        if(cleanedUserid) {
-            const fetchUserInfo = async () => {
-                try {
-                    const docRef = doc(db, 'users', cleanedUserid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        setUsername(docSnap.data().userid);
-                        setUsers([{username: docSnap.data().userid, message: ''}]);
-                    } else {
-                        console.log(docSnap.data());
-                        console.log("ユーザー情報が見つかりません!");
-                    }
-                } catch (error) {
-                    console.error("ユーザー情報取得中にエラーが発生しました！", error);
-                }
-            }
-
-            fetchUserInfo();
-        } else {
-            console.log("ユーザー情報がありません。ログインしてください。");
-            window.location.href = '/login';
-        }
         socket = io();
 
         socket.on('receive_message', ({username, message, total}) => {
@@ -72,12 +48,10 @@ export default function CreateRoom() {
                 return updateUsers;
             });
             setTotal(total);
-            console.log(users);
         });
 
         //新しいユーザーが接続したときの処理
         socket.on('user_connected', ({userInfo, total}) => {
-            console.log('user_connected', userInfo);
             setUsers(userInfo);
             setTotal(total);
         });
@@ -85,10 +59,10 @@ export default function CreateRoom() {
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, [loading, isLoggedIn]);
 
     const createRoom = () => {
-        socket.emit('create_room', { roomId, username, roomStack, roomMember, password });
+        socket.emit('create_room', { roomId, username: user.username, roomStack, roomMember, password });
         setJoined(true);
     };
 
@@ -98,7 +72,7 @@ export default function CreateRoom() {
     };
 
     const sendMessage = () => {
-        socket.emit('message', { roomId, username, message });
+        socket.emit('message', { roomId, username: user.username, message });
         setMessage('');
     };
 
@@ -106,6 +80,8 @@ export default function CreateRoom() {
         console.log('Emitting save_score with users:', users);
         socket.emit('save_score', { users });
     }
+
+    if(loading) return <Spinner />;
 
     return (
         <div className={styles.background}>

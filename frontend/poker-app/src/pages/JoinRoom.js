@@ -1,59 +1,32 @@
 import Header from "../components/Header.js";
+import Spinner from "../components/Spinner.js";
 import styles from "../styles/style.module.css";
 import React, { useEffect, useState } from 'react';
 import io from 'socket.io-client';
-import { doc, getDoc } from "firebase/firestore";
-import { db } from "./firebase.js";
 import { useNavigate } from 'react-router-dom';
+import { useUser } from "../hooks/useUser.js";
 
 let socket;
 
 export default function JoinRoom() {
     const [roomId, setRoomId] = useState('');
     const [password, setPassword] = useState('');
-    const [username, setUsername] = useState('');
     const [message, setMessage] = useState('');
-    const [users, setUsers] = useState([]);
     const [joined, setJoined] = useState(false);
     const [total, setTotal] = useState(0);
-    const [login, setLogin] = useState(false);
     const navigate = useNavigate();
 
-    const handleNavigation = (path) => {
-        navigate(path);
-    }
+    const {user, isLoggedIn, loading} = useUser();
+    const [users, setUsers] = useState(user ? [{username: user.username, message: ''}]: []);
 
 
     useEffect(() => {
-        const logined = sessionStorage.getItem('login');
-        const loglog = Boolean(logined);
-        setLogin(loglog);
-        if(!loglog) {
-            handleNavigation('/login');
-            return;
-        }
-        const userid = sessionStorage.getItem('userid');
-        const cleanedUserid = userid.trim().replace(/['"]+/g, '');
-        if(cleanedUserid) {
-            const fetchUserInfo = async () => {
-                try {
-                    const docRef = doc(db, 'users', cleanedUserid);
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        setUsername(docSnap.data().userid);
-                        setUsers([{socketId: '', username: docSnap.data().userid, message: ''}]);
-                    } else {
-                        console.log("ユーザー情報が見つかりません!");
-                    }
-                } catch (error) {
-                    console.error("ユーザー情報取得中にエラーが発生しました！", error);
-                }
-            }
+        //ローディング中は処理を進めないようにする
+        if(loading) return;
 
-            fetchUserInfo();
-        } else {
-            console.log("ユーザー情報がありません。ログインしてください。");
-            window.location.href = '/login';
+        if(!isLoggedIn){
+            navigate('/login');
+            return;
         }
 
         socket = io();
@@ -87,10 +60,10 @@ export default function JoinRoom() {
         return () => {
             socket.disconnect();
         };
-    }, []);
+    }, [loading, isLoggedIn]);
 
     const joinRoom = () => {
-        socket.emit('join_room', { roomId, username, password }, (response) => {
+        socket.emit('join_room', { roomId, username: user.username, password }, (response) => {
             if (response.success) {
                 alert('Room joined!');
                 setJoined(true);
@@ -101,15 +74,17 @@ export default function JoinRoom() {
     };
 
     const leaveRoom = () => {
-        socket.emit('leave_room', { roomId, username });
+        socket.emit('leave_room', { roomId, username: user.username });
         setJoined(false);
     }
 
 
     const sendMessage = () => {
-        socket.emit('message', { roomId, username, message });
+        socket.emit('message', { roomId, username: user.username, message });
         setMessage('');
     }
+
+    if(loading) return <Spinner />;
 
     return(
         <div className={styles.background}>
