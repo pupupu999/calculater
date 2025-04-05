@@ -35,7 +35,7 @@ const Header = () => {
                     <li><a onClick= {() => handleNavigation('/mypage')}>Home</a></li>
                     <li><a onClick= {() => handleNavigation('/CreateRoom')}>部屋作成</a></li>
                     <li><a onClick= {() => handleNavigation('/JoinRoom')}>部屋検索</a></li>
-                    <li><a onClick= {() => handleNavigation('/JoinRoom')}>ランキング</a></li>
+                    <li><a onClick= {() => handleNavigation('/Ranking')}>ランキング</a></li>
                     <li><a onClick= {() => logout()}>ログアウト</a></li>
                 </ul>
             </nav>
