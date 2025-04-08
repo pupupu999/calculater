@@ -2,12 +2,13 @@ import styles from '../styles/style.module.css';
 import MyLineChart from "./LineChart.js";
 import TableFlame from "./TableFlame.js";
 import { doc, getDoc } from "firebase/firestore";
-import { db } from "../pages/firebase.js";
+import { db } from "../firebase.js";
 import React, { useEffect, useState } from 'react';
 import Score from './Score.js';
+import {useUser} from '../hooks/useUser.js';
 
 
-const Record = ({login}) => {
+const Record = () => {
     const sampleData = [{total_chip:100, date:2024-1-1},{total_chip:-400,date:2024-1-2},{total_chip:200,date:2024-1-3}];
     const sampleCount = {losses:1,wins:2,games:3};
     const sampleTable = [
@@ -16,32 +17,29 @@ const Record = ({login}) => {
         {chip:600,total_chip:200,date:2024-1-3}
     ];
     
+    const { user,isLoggedIn, loading } = useUser();
     const [data, setData] = useState([]);
     const [scoreData, setScoreData] = useState([]);
     const [tableData, setTableData] = useState([]);
 
     useEffect(() => {
-        if (!login) return;
-        const userid = sessionStorage.getItem('userid');
-        const cleanedUserid = userid.trim().replace(/['"]+/g, '');
-        if(cleanedUserid) {
+        if (!isLoggedIn || !user || loading) return;
             const fetchUserInfo = async () => {
                 try {
-                    const docRef = doc(db, 'users', cleanedUserid);
+                    const docRef = doc(db, 'users', user.uid);
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
-                        if(docSnap.data().results?.count){
-                            setScoreData(docSnap.data().results.count);
-                            const formattedData = docSnap.data().results.day_value.map((item) => ({
+                        const data=docSnap.data();
+                        const results=data.results;
+                        if(results?.count){
+                            setScoreData(results.count);
+                            const formattedData = results.day_value.map((item) => ({
                                 // タイムスタンプを日付に変換
                                 ...item,
                                 date: new Date(item.date.seconds * 1000).toLocaleDateString() // 'seconds'を使用して変換
                             }));
-
                             setData(formattedData);
-
                             const groupedData = {};
-
                             // データを日付ごとにグループ化
                             formattedData.forEach((item) => {
                                 const {date, chip, total_chip } = item;
@@ -49,16 +47,9 @@ const Record = ({login}) => {
                                     groupedData[date] = { date, chip: 0, total_chip: 0 };
                                 }
                                 groupedData[date].chip += chip;
-                                //total_chip は最後の要素の値を保持
-                                // if (typeof total_chip === 'number') {
-                                    groupedData[date].total_chip = total_chip;
-                                // } else {
-                                //     console.error('Invalid total_chip value:', total_chip);
-                                // }
+                                groupedData[date].total_chip = total_chip;
                             });
-
                             const aggregatedData = Object.values(groupedData);
-                            console.log("aggregatedData",aggregatedData);
                             setTableData(aggregatedData);
                         }
                     } else {
@@ -69,18 +60,13 @@ const Record = ({login}) => {
                     console.error("ユーザー情報取得中にエラーが発生しました！", error);
                 }
             }
-
             fetchUserInfo();
-        } else {
-            console.log("ユーザー情報がありません。ログインしてください。");
-            window.location.href = '/login';
-        }
-    }, [login]);
+    }, [user, isLoggedIn, loading]);
 
     return (
         <div>
             <div className={styles.background}>
-                {login ? (
+                {isLoggedIn ? (
                     <>
                     <MyLineChart 
                         data = {data}

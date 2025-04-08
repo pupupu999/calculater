@@ -1,78 +1,40 @@
 import styles from "../styles/style.module.css";
 import React, { useState } from 'react';
-import { signInWithPopup } from 'firebase/auth';
-import { auth, googleProvider } from './firebase.js';
+import { signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
+import { auth, googleProvider } from '../firebase.js';
+import { syncUserToServer } from "../utils/syncUser.js";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-    const [userid, setUserid] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [logined, setLogined] = useState(false);
 
-    const navigate = useNavigate();
+    const navigate=useNavigate();
 
-    const handleNavigation = (path) => {
-        navigate(path);
+    const handleNavigationToRegister=() => {
+        navigate('/Register');
     }
 
     const handleGoogleLogin = async () => {
         try {
-        const result = await signInWithPopup(auth, googleProvider);
-        const user = result.user;
-        console.log("Logged in as:", user.displayName);
-        setLogined(true);
-        // ログイン成功後の処理
-        } catch (error) {
-        console.error("Error during Google login:", error);
-        alert("Googleログインに失敗しました");
+            const result = await signInWithPopup(auth, googleProvider);
+            await syncUserToServer(result.user);
+            alert('Googleログイン成功');
+            navigate('/Mypage');
+        } catch (err) {
+            console.error(err);
+            alert('Googleログイン失敗');
         }
     };
-
-    const registerUser = async () => {
+    
+    const handleloginWithEmail = async () => {
         try {
-            if (!userid || !password) {
-                alert('ユーザーIDとパスワードを入力してください');
-                return;
-            }
-            const response = await fetch('/api/auth/regist', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userid, password })
-            });
-            const data = await response.json();
-            alert(data.message);
-            sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
-            sessionStorage.setItem('login', JSON.stringify(true));
-            handleNavigation('/mypage');
+            const result = await signInWithEmailAndPassword(auth, email, password);
+            await syncUserToServer(result.user);
+            alert("ログイン成功:", result.user);
+            navigate('/Mypage');
         } catch (error) {
-            console.error('Error registering user:', error);
-        }
-    };
-
-    const loginUser = async () => {
-        try {
-            if (!userid || !password) {
-                alert('ユーザーIDとパスワードを入力してください');
-                return;
-            }
-            const response = await fetch('/api/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ userid, password })
-            });
-            const data = await response.json();
-            if (data.message === 'Login successful!') {
-                alert('ログイン成功');
-                sessionStorage.setItem('userid', JSON.stringify(data.user.userid));
-                sessionStorage.setItem('login', JSON.stringify(true));
-                setLogined(true);
-                handleNavigation('/mypage');
-            } else {
-                alert(data.message);
-            }
-        } catch (error) {
-        console.error('Error logging in:', error);
-        alert('ログインに失敗しました');
+            alert("ログインに失敗しました");
         }
     };
 
@@ -80,12 +42,11 @@ return (
     <div>
         <div className = {styles.background}>
             <h1>Login</h1>
-            <button onClick={handleGoogleLogin}>Login with Google</button>
+            <button onClick={handleGoogleLogin}>Googleでログイン</button>
             <input 
-                type="text"
-                placeholder="userid"
-                value={userid}
-                onChange={(e) => setUserid(e.target.value)}
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
             />
             <input
                 type="password"
@@ -93,8 +54,8 @@ return (
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
             />
-            <button onClick={registerUser}>Create Account</button>
-            <button onClick={loginUser}>Login</button>
+            <button onClick={handleNavigationToRegister}>新規登録</button>
+            <button onClick={handleloginWithEmail}>メールアドレスでログイン</button>
         </div>
     </div>
 );

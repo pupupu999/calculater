@@ -1,11 +1,14 @@
 import { createServer } from 'http';
 import express from 'express';
 import { Server } from 'socket.io';
-import { db } from '../frontend/poker-app/src/pages/firebase.js';
+import { db } from '../frontend/poker-app/src/firebase.js';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import auth from './auth.js';
+import auth from './routes/auth.js';
+import secure from './routes/secure.js';
+import helmet from 'helmet';
+import cors from 'cors';
 
 let rooms = {}; // 各ルームIDにパスワードを保持
 
@@ -16,11 +19,39 @@ const __dirname = path.dirname(__filename);
 // Express アプリケーションを作成
 const app = express();
 
+// 本番環境では変更する！（サーバーへのフロントのアクセス制限）
+app.use(cors({ origin:["http://localhost:3000", "http://192.168.0.50:3000"], credentials: true  }));
+
+app.use(
+    helmet({
+        crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+        contentSecurityPolicy: {
+            directives: {
+                defaultSrc: ["'self'"],
+                imgSrc: ["'self'", "data:", "https://www.google.com"],
+                scriptSrc: ["'self'", "https://apis.google.com"],
+                connectSrc: [
+                    "'self'", 
+                    "https://apis.google.com",
+                    "https://identitytoolkit.googleapis.com",
+                    "https://firestore.googleapis.com",
+                ],
+                frameSrc: [
+                    "https://accounts.google.com",
+                    "https://my-project-30c6b.firebaseapp.com",
+                ],
+                styleSrc: ["'self'", "'unsafe-inline'"],
+            },
+        },
+    })
+);
+
 //ミドルウェアの設定
 app.use(express.json());
 
 // ルーティングの設定
 app.use('/api/auth', auth);
+app.use('/api/secure', secure);
 
 
 // 静的ファイルの配信設定
@@ -35,7 +66,13 @@ app.get('*', (req, res) => {
 const server = createServer(app);
 
 // Socket.IO サーバーを初期化
-const io = new Server(server);
+const io = new Server(server, {
+    cors: {
+        origin: ["http://localhost:3000", "http://192.168.0.50:3000"], // 本番環境では変更する
+        methods: ["GET", "POST"],
+        credentials: true
+    }
+});
 
 // Socket.IO のイベントハンドラ
 io.on('connection', (socket) => {
@@ -45,15 +82,16 @@ io.on('connection', (socket) => {
         console.log(`受信イベント: ${event}`, args);
     });
 
-    socket.on('join_room', async ({ roomId, username, password }, callback) => {
+    socket.on('join_room', async ({ roomId, username, password,uid }, callback) => {
         if (rooms[roomId]) {
             if (rooms[roomId].password === password) {
                 if (!rooms[roomId].users) {
                     rooms[roomId].users = [];
                 }
                 if (rooms[roomId].users.length < rooms[roomId].capacity) {
-                    rooms[roomId].users.push({ socketId: socket.id, username, message: '' });
+                    rooms[roomId].users.push({ socketId: socket.id, username, message: '', uid });
                     socket.join(roomId);
+                    console.log('uid確認:',rooms[roomId].users);
                     io.to(roomId).emit('user_connected', { userInfo: rooms[roomId].users, total: rooms[roomId].total });
                     callback({ success: true });
                 } else {
@@ -67,8 +105,8 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on('create_room', ({ roomId, username, roomStack, roomMember, password }) => {
-        rooms[roomId] = { password, stack: roomStack, capacity: Number(roomMember), users: [{ socketId: socket.id, username, message: '' }], total: 0 };
+    socket.on('create_room', ({ roomId, username, roomStack, roomMember, password, uid }) => {
+        rooms[roomId] = { password, stack: roomStack, capacity: Number(roomMember), users: [{ socketId: socket.id, username, message: '',uid }], total: 0 };
         socket.join(roomId);
         console.log(`Room ${roomId} created`);
     });
@@ -85,6 +123,7 @@ io.on('connection', (socket) => {
     });
     //自身の残りスタックを送信する
     socket.on('message', ({ roomId, username, message }) => {
+        console.log("ユーザーメッセージ：",message);
         rooms[roomId].total = 0;
         rooms[roomId].users.forEach((user) => {
             if (user.username === username) {
@@ -109,7 +148,7 @@ io.on('connection', (socket) => {
             const newMember = users.map(user => user.username);
             users.forEach(async (user) => {
                 const currentDate = Timestamp.now();
-                const docRef = doc(db, 'users', user.username);
+                const docRef = doc(db, 'users', user.uid);
                 const docSnap = await getDoc(docRef);
                 //cloud firestoreにデータを保存する
                 if (docSnap.exists()&&docSnap.data().results) {
@@ -169,6 +208,6 @@ io.on('connection', (socket) => {
 
 // サーバーを指定ポートで起動
 const PORT = process.env.PORT || 3001;
-server.listen(PORT, () => {
+server.listen(PORT, '0.0.0.0',() => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });

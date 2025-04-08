@@ -23,6 +23,8 @@ const MyPage = () => {
         return <Spinner />;
     }
 
+    if(!user) return <p>ユーザー情報が取得できませんでした</p>
+
     return (
         <div className={styles.background}>
             <Header />
