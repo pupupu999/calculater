@@ -1,1 +1,3 @@
 node_modules
+# Firebase Admin SDK 秘密鍵
+server/serviceAccountKey.json

@@ -29,12 +29,12 @@ const columns=[
 ];
 
 const TableFlame = ({tData}) => {
-    console.log("テーブルデータ",tData);
     if (!tData || tData.length === 0) {
         // データが空の場合のエラーハンドリング
         return (
             <div className={styles.tableContainer}>
                 <Table
+                    rowKey="date"
                     className={styles.table}
                     columns={columns}
                     dataSource={sampleData}
@@ -48,6 +48,7 @@ const TableFlame = ({tData}) => {
     return (
         <div className={styles.tableContainer}>
             <Table
+                rowKey="date"
                 className={styles.table}
                 columns={columns}
                 dataSource={tData}

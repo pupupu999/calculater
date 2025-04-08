@@ -1,12 +1,10 @@
 import Header from "../components/Header.js";
 import Spinner from "../components/Spinner.js";
 import styles from "../styles/style.module.css";
-import React, { useEffect, useState } from 'react';
-import io from 'socket.io-client';
+import React, { useEffect, useState, useRef } from 'react';
+import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../hooks/useUser.js";
-
-let socket;
 
 export default function CreateRoom() {
     const [roomId, setRoomId] = useState('');
@@ -23,7 +21,9 @@ export default function CreateRoom() {
     };
 
     const { user, isLoggedIn, loading } = useUser();
-    const[users, setUsers] = useState(user ? [{username: user.username, message: ''}] : []);
+    const[users, setUsers] = useState([]);
+
+    const socketRef=useRef(null);
 
     useEffect(() => {
         //ローディング中に処理を進めないようにする
@@ -34,9 +34,18 @@ export default function CreateRoom() {
             return;
         }
 
-        socket = io();
+        if (user) {
+            setUsers([{ username: user.username, message: '' ,uid: user.uid}]);
+        }
 
-        socket.on('receive_message', ({username, message, total}) => {
+        const newSocket = io(`${window.location.hostname}:3001`, {
+            transports: ["websocket"],
+            withCredentials: true
+        });
+
+        socketRef.current=newSocket;
+
+        newSocket.on('receive_message', ({username, message, total}) => {
             setUsers((prevUsers) => {
                 const updateUsers = prevUsers.map((user) => {
                     if (user.username === username) {
@@ -44,41 +53,57 @@ export default function CreateRoom() {
                     }
                     return user;
                 });
-                console.log(updateUsers);
+                console.log('スタックの送信確認:',updateUsers);
                 return updateUsers;
             });
             setTotal(total);
         });
 
         //新しいユーザーが接続したときの処理
-        socket.on('user_connected', ({userInfo, total}) => {
+        newSocket.on('user_connected', ({userInfo, total}) => {
             setUsers(userInfo);
             setTotal(total);
         });
 
         return () => {
-            socket.disconnect();
+            newSocket.disconnect();
         };
-    }, [loading, isLoggedIn]);
+    }, [loading, isLoggedIn, user]);
 
     const createRoom = () => {
-        socket.emit('create_room', { roomId, username: user.username, roomStack, roomMember, password });
-        setJoined(true);
+        if(socketRef.current){
+            socketRef.current.emit('create_room', { roomId, username: user.username, roomStack, roomMember, password, uid:user.uid });
+            setJoined(true);
+        }else{
+            console.error('Socket is not initialized.');
+        }
     };
 
     const deleteRoom = () => {
-        socket.emit('delete_room', { roomId });
-        setJoined(false);
+        if(socketRef.current){
+            socketRef.current.emit('delete_room', { roomId });
+            setJoined(false);
+        }else{
+            console.error('Socket is not initialized.');
+        }
     };
 
     const sendMessage = () => {
-        socket.emit('message', { roomId, username: user.username, message });
-        setMessage('');
+        if(socketRef.current){
+            socketRef.current.emit('message', { roomId, username: user.username, message });
+            setMessage('');
+        }else{
+            console.error('Socket is not initialized.');
+        }
     };
 
     const recordData = () => {
-        console.log('Emitting save_score with users:', users);
-        socket.emit('save_score', { users });
+        if(socketRef.current){
+            console.log('Emitting save_score with users:', users);
+            socketRef.current.emit('save_score', { users });
+        }else{
+            console.error('Socket is not initialized.');
+        }
     }
 
     if(loading) return <Spinner />;
@@ -136,7 +161,7 @@ export default function CreateRoom() {
                 <div className={styles.resultsList}>
                     {users.map((user, index) => (
                         <div key={index} className={styles.userItem}>
-                            <h3>{user.username}のメッセージ</h3>
+                            <h3>{user.username}のスタック</h3>
                             <p>{user.message}</p>
                         </div>
                     ))}

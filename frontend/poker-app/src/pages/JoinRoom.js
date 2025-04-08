@@ -1,12 +1,10 @@
 import Header from "../components/Header.js";
 import Spinner from "../components/Spinner.js";
 import styles from "../styles/style.module.css";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import io from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../hooks/useUser.js";
-
-let socket;
 
 export default function JoinRoom() {
     const [roomId, setRoomId] = useState('');
@@ -17,8 +15,9 @@ export default function JoinRoom() {
     const navigate = useNavigate();
 
     const {user, isLoggedIn, loading} = useUser();
-    const [users, setUsers] = useState(user ? [{username: user.username, message: ''}]: []);
+    const [users, setUsers] = useState([]);
 
+    const socketRef=useRef(null);
 
     useEffect(() => {
         //ローディング中は処理を進めないようにする
@@ -29,9 +28,13 @@ export default function JoinRoom() {
             return;
         }
 
-        socket = io();
+        const newSocket = io(`${window.location.hostname}:3001`, {
+            transports: ["websocket"],
+            withCredentials: true
+        });
+        socketRef.current = newSocket;
 
-        socket.on('receive_message', ({username, message, total}) => {
+        newSocket.on('receive_message', ({username, message, total}) => {
             setUsers((prevUsers) => {
                 const updateUsers = prevUsers.map((user) => {
                     if (user.username === username) {
@@ -46,24 +49,32 @@ export default function JoinRoom() {
         });
 
         //新しいユーザーが接続したときの処理
-        socket.on('user_connected', ({userInfo, total}) => {
+        newSocket.on('user_connected', ({userInfo, total}) => {
             console.log('つながったよ', userInfo);
             setUsers(userInfo);
             setTotal(total);
         });
 
-        socket.on('room_deleted', () => {
+        newSocket.on('room_deleted', () => {
             alert('部屋が削除されました');
             setJoined(false);
         });
 
         return () => {
-            socket.disconnect();
+            newSocket.disconnect();
         };
     }, [loading, isLoggedIn]);
 
+    useEffect(() => {
+        if (user) {
+            setUsers([{ username: user.username, message: '', uid:user.uid }]);
+        }
+    }, [user]);
+
     const joinRoom = () => {
-        socket.emit('join_room', { roomId, username: user.username, password }, (response) => {
+        if(!socketRef.current) return;
+
+        socketRef.current.emit('join_room', { roomId, username: user.username, password,uid: user.uid }, (response) => {
             if (response.success) {
                 alert('Room joined!');
                 setJoined(true);
@@ -74,13 +85,17 @@ export default function JoinRoom() {
     };
 
     const leaveRoom = () => {
-        socket.emit('leave_room', { roomId, username: user.username });
+        if(!socketRef.current) return;
+
+        socketRef.current.emit('leave_room', { roomId, username: user.username });
         setJoined(false);
     }
 
 
     const sendMessage = () => {
-        socket.emit('message', { roomId, username: user.username, message });
+        if(!socketRef.current) return;
+
+        socketRef.current.emit('message', { roomId, username: user.username, message });
         setMessage('');
     }
 
@@ -127,7 +142,7 @@ export default function JoinRoom() {
                 <div>
                     {users.map((user, index) => (
                         <div key={index}>
-                            <h3>{user.username}のメッセージ</h3>
+                            <h3>{user.username}のスタック</h3>
                             <p>{user.message}</p>
                         </div>
                     ))}
