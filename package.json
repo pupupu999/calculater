@@ -6,7 +6,6 @@
   "homepage": "./",
   "scripts": {
     "dev": "node server/server.js",
-    "build": "cd client/poker-app && react-scripts build",
     "start": "NODE_ENV=production node server/server.js",
     "start-client": "cd client/poker-app && HOST=0.0.0.0 PORT=3000 react-scripts start",
     "start-all": "concurrently --names \"server,client\" -c \"blue,green\" \"node server/server.js\" \"cd client/poker-app && HOST=0.0.0.0 PORT=3000 react-scripts start\""

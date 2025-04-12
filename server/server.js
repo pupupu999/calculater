@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import express from 'express';
 import { Server } from 'socket.io';
-import { db } from '../client/poker-app/src/firebase.js';
+import { db } from './firebase-admin.js';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -20,29 +20,38 @@ const __dirname = path.dirname(__filename);
 const app = express();
 
 // 本番環境では変更する！（サーバーへのフロントのアクセス制限）
-app.use(cors({ origin:["http://localhost:3000", "http://192.168.0.50:3000"], credentials: true  }));
+app.use(cors({
+    origin:"*",
+    credentials: true
+}));
+
+// app.use(
+//     helmet({
+//         crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
+//         contentSecurityPolicy: {
+//             directives: {
+//                 defaultSrc: ["'self'"],
+//                 imgSrc: ["'self'", "data:", "https://www.google.com"],
+//                 scriptSrc: ["'self'", "https://apis.google.com"],
+//                 connectSrc: [
+//                     "'self'", 
+//                     "https://apis.google.com",
+//                     "https://identitytoolkit.googleapis.com",
+//                     "https://firestore.googleapis.com",
+//                 ],
+//                 frameSrc: [
+//                     "https://accounts.google.com",
+//                     "https://my-project-30c6b.firebaseapp.com",
+//                 ],
+//                 styleSrc: ["'self'", "'unsafe-inline'"],
+//             },
+//         },
+//     })
+// );
 
 app.use(
     helmet({
-        crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
-        contentSecurityPolicy: {
-            directives: {
-                defaultSrc: ["'self'"],
-                imgSrc: ["'self'", "data:", "https://www.google.com"],
-                scriptSrc: ["'self'", "https://apis.google.com"],
-                connectSrc: [
-                    "'self'", 
-                    "https://apis.google.com",
-                    "https://identitytoolkit.googleapis.com",
-                    "https://firestore.googleapis.com",
-                ],
-                frameSrc: [
-                    "https://accounts.google.com",
-                    "https://my-project-30c6b.firebaseapp.com",
-                ],
-                styleSrc: ["'self'", "'unsafe-inline'"],
-            },
-        },
+        contentSecurityPolicy: false
     })
 );
 
@@ -68,7 +77,7 @@ const server = createServer(app);
 // Socket.IO サーバーを初期化
 const io = new Server(server, {
     cors: {
-        origin: ["http://localhost:3000", "http://192.168.0.50:3000"], // 本番環境では変更する
+        origin: "*", // 本番環境では変更する
         methods: ["GET", "POST"],
         credentials: true
     }
