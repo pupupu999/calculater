@@ -1,4 +1,4 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine, ResponsiveContainer} from 'recharts';
 import styles from '../styles/style.module.css';
 
 //データが空の場合のデフォルトデータ
@@ -16,13 +16,19 @@ const MyLineChart = ({data}) => {
     // データから最小値と最大値を計算
     const minValue = Math.min(...displayData.map((d) => d["total_chip"]));
     const maxValue = Math.max(...displayData.map((d) => d["total_chip"]));
-    const range = Math.max(Math.abs(minValue), Math.abs(maxValue)); // 絶対値の大きい方を取得
+    // 少し余裕を持たせるためのバッファ
+    const buffer = 800;
 
     // メモリ範囲を計算 (400単位刻みに調整)
     const tickStep = 400;
-    const ticks = [];
 
-    for (let i = -Math.ceil(range / tickStep) * tickStep; i <= Math.ceil(range / tickStep) * tickStep; i += tickStep) {
+    // Y軸の最小・最大を調整（bufferを加える）
+    const adjustedMin = Math.floor((minValue - buffer) / tickStep) * tickStep;
+    const adjustedMax = Math.ceil((maxValue + buffer) / tickStep) * tickStep;
+
+    // ticks を adjustedMin〜adjustedMax の範囲で生成
+    const ticks = [];
+    for (let i = adjustedMin; i <= adjustedMax; i += tickStep) {
         ticks.push(i);
     }
 
@@ -30,23 +36,28 @@ const MyLineChart = ({data}) => {
     return (
         <div className = {styles.chart}>
             {displayData.length > 0 ? (
-                <LineChart width={600} height={300} data={displayData}>
-                    <CartesianGrid strokeDasharray="3 3" fill='#ffffff'/>
-                    <XAxis dataKey="date" />
+                <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={displayData}>
+                    <CartesianGrid strokeDasharray="3 3" fill="#ffffff"/>
+                    <XAxis 
+                        dataKey="date"
+                        axisLine={{ stroke: "#000", strokeWidth: 1 }}
+                    />
                     <YAxis 
                         dataKey="total_chip"
-                        domain={[-Math.ceil(range / tickStep) * tickStep, Math.ceil(range / tickStep) * tickStep]} // -range～+rangeに設定
-                        ticks={ticks} // カスタムメモリ (400刻み)
-                        tickFormatter={(tick) => tick.toLocaleString()} // メモリを見やすく
+                        domain={[adjustedMin, adjustedMax]}
+                        ticks={ticks}
+                        tickFormatter={(tick) => tick.toLocaleString()}
                         tickCount={10}
                         allowDataOverflow={true}
+                        axisLine={{ stroke: "#000", strokeWidth: 1 }}
                     />
                     <Tooltip />
                     <Legend />
-                    {/*y=0の部分だけ太線を表示する*/}
-                    <ReferenceLine y={0} strokeDasharray="black" strokeWidth={1} />
+                    <ReferenceLine y={0} strokeDasharray="black" strokeWidth={2} />
                     <Line type="monotone" dataKey="total_chip" stroke="#82ca9d" />
                 </LineChart>
+            </ResponsiveContainer>
             ) : (
                 <p>データを読み込み中...</p>
             )}

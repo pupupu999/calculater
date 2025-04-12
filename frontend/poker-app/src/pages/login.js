@@ -39,23 +39,37 @@ export default function Login() {
     };
 
 return (
-    <div>
-        <div className = {styles.background}>
-            <h1>Login</h1>
-            <button onClick={handleGoogleLogin}>Googleでログイン</button>
-            <input 
-                placeholder="Email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-            />
-            <input
-                type="password"
-                placeholder="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-            />
-            <button onClick={handleNavigationToRegister}>新規登録</button>
-            <button onClick={handleloginWithEmail}>メールアドレスでログイン</button>
+    <div className={styles.loginContainer}>
+        <div className={styles.loginBox}>
+            <h2 className={styles.loginTitle}>Login</h2>
+            <div className={styles.loginContent}>
+                <div className={styles.loginLeft}>
+                    <input
+                        className={styles.loginInput}
+                        type="email"
+                        placeholder="メールアドレス"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <input
+                        className={styles.loginInput}
+                        type="password"
+                        placeholder="パスワード"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <button className={styles.emailLoginButton} onClick={handleloginWithEmail}>
+                        ログイン
+                    </button>
+                </div>
+                <div className={styles.loginRight}>
+                <div className={styles.forgotPassword}>または</div>
+                    <button className={styles.socialLoginButton} onClick={handleNavigationToRegister}>メールアドレスで新規登録</button>
+                    <button className={styles.socialLoginButton} onClick={handleGoogleLogin}>
+                        Googleでサインイン
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 );

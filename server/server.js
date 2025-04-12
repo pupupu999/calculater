@@ -82,33 +82,63 @@ io.on('connection', (socket) => {
         console.log(`受信イベント: ${event}`, args);
     });
 
-    socket.on('join_room', async ({ roomId, username, password,uid }, callback) => {
-        if (rooms[roomId]) {
-            if (rooms[roomId].password === password) {
-                if (!rooms[roomId].users) {
-                    rooms[roomId].users = [];
-                }
-                if (rooms[roomId].users.length < rooms[roomId].capacity) {
-                    rooms[roomId].users.push({ socketId: socket.id, username, message: '', uid });
-                    socket.join(roomId);
-                    console.log('uid確認:',rooms[roomId].users);
-                    io.to(roomId).emit('user_connected', { userInfo: rooms[roomId].users, total: rooms[roomId].total });
-                    callback({ success: true });
-                } else {
-                    callback({ success: false, message: '定員に達しています' });
-                }
-            } else {
-                callback({ success: false, message: 'パスワードが違います' });
-            }
-        } else {
-            callback({ success: false, message: '部屋が見つかりません' });
+    socket.on('join_room', ({ roomId, username, uid, password }, callback) => {
+        const room = rooms[roomId];
+    
+        if (!room) {
+            return callback?.({ success: false, message: '部屋が存在しません' });
         }
+    
+        // JoinRoom.js 経由では password 必須
+        if (password !== undefined) {
+            if (room.password !== password) {
+                return callback?.({ success: false, message: 'パスワードが違います' });
+            }
+        }
+    
+        // すでに参加済みの uid は再登録しない
+        const alreadyJoined = room.users.some((u) => u.uid === uid);
+        if (!alreadyJoined) {
+            if (room.users.length >= room.capacity) {
+                return callback?.({ success: false, message: '定員に達しています' });
+            }
+    
+            room.users.push({ socketId: socket.id, username, message: '', uid });
+        }
+    
+        socket.join(roomId);
+    
+        // RoomPage 初期化用
+        io.to(socket.id).emit('room_info', {
+            users: room.users,
+            hostUid: room.hostUid,
+            total: room.total
+        });
+    
+        io.to(roomId).emit('user_connected', {
+            userInfo: room.users,
+            total: room.total
+        });
+    
+        callback?.({ success: true });
     });
 
-    socket.on('create_room', ({ roomId, username, roomStack, roomMember, password, uid }) => {
-        rooms[roomId] = { password, stack: roomStack, capacity: Number(roomMember), users: [{ socketId: socket.id, username, message: '',uid }], total: 0 };
+    socket.on('create_room', ({ roomId, username, roomStack, roomMember, password, uid }, callback) => {
+        if (rooms[roomId]) {
+            return callback?.({ success: false, message: '同じIDの部屋が既に存在します' });
+        }
+    
+        rooms[roomId] = {
+            password,
+            stack: Number(roomStack),
+            capacity: Number(roomMember),
+            total: 0,
+            hostUid: uid,
+            users: [{ socketId: socket.id, username, message: '', uid }]
+        };
         socket.join(roomId);
         console.log(`Room ${roomId} created`);
+        callback?.({ success: true });
     });
 
     socket.on('delete_room', ({ roomId }) => {
@@ -137,8 +167,13 @@ io.on('connection', (socket) => {
     //部屋の退室を実行する
     socket.on('leave_room', ({ roomId, username }) => {
         if (rooms[roomId]) {
+            const leaveUser = rooms[roomId].users.filter((user) => user.username == username);
             rooms[roomId].users = rooms[roomId].users.filter((user) => user.username !== username);
-            io.to(roomId).emit('user_connected', rooms[roomId].users);
+            rooms[roomId].total -= Number(leaveUser[0].message);
+            io.to(roomId).emit('user_left', {
+                userInfo: rooms[roomId].users,
+                total: rooms[roomId].total,
+            });
             socket.leave(roomId);
         }
     });
@@ -193,16 +228,6 @@ io.on('connection', (socket) => {
         } catch (error) {
             console.error("スコア保存中にエラーが発生しました！", error);
         }
-    });
-
-    socket.on('disconnect', () => {
-        for (const roomId in rooms) {
-            if (rooms[roomId].users) {
-                rooms[roomId].users = rooms[roomId].users.filter((user) => user.socketId !== socket.id);
-                io.to(roomId).emit('room_users', rooms[roomId]);
-            }
-        }
-        console.log('User disconnected', socket.id);
     });
 });
 
