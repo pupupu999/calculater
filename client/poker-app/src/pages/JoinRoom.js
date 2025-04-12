@@ -10,6 +10,7 @@ import { useUser } from "../hooks/useUser.js";
 export default function JoinRoom() {
     const [roomId, setRoomId] = useState('');
     const [password, setPassword] = useState('');
+    const [rebuy, setRebuy] = useState('');
 
     const navigate = useNavigate();
 
@@ -49,7 +50,8 @@ export default function JoinRoom() {
             roomId,
             password,
             username: user.username,
-            uid: user.uid
+            uid: user.uid,
+            rebuy
         }, (response) => {
             if (response.success) {
                 navigate(`/room/${roomId}`);
@@ -85,6 +87,13 @@ export default function JoinRoom() {
                             placeholder="パスワード"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <input
+                            className={styles.roomInputField}
+                            type="number"
+                            placeholder="リバイ"
+                            value={rebuy}
+                            onChange={(e) => setRebuy(e.target.value)}
                         />
                         <button className={styles.roomCreateButton} onClick={joinRoom}>参加</button>
                     </div>

@@ -82,7 +82,7 @@ io.on('connection', (socket) => {
         console.log(`受信イベント: ${event}`, args);
     });
 
-    socket.on('join_room', ({ roomId, username, uid, password }, callback) => {
+    socket.on('join_room', ({ roomId, username, uid, password, rebuy }, callback) => {
         const room = rooms[roomId];
     
         if (!room) {
@@ -103,7 +103,7 @@ io.on('connection', (socket) => {
                 return callback?.({ success: false, message: '定員に達しています' });
             }
     
-            room.users.push({ socketId: socket.id, username, message: '', uid });
+            room.users.push({ socketId: socket.id, username, message: '', uid, rebuy });
         }
     
         socket.join(roomId);
@@ -123,7 +123,7 @@ io.on('connection', (socket) => {
         callback?.({ success: true });
     });
 
-    socket.on('create_room', ({ roomId, username, roomStack, roomMember, password, uid }, callback) => {
+    socket.on('create_room', ({ roomId, username, roomStack, roomMember, password, uid, rebuy }, callback) => {
         if (rooms[roomId]) {
             return callback?.({ success: false, message: '同じIDの部屋が既に存在します' });
         }
@@ -134,7 +134,7 @@ io.on('connection', (socket) => {
             capacity: Number(roomMember),
             total: 0,
             hostUid: uid,
-            users: [{ socketId: socket.id, username, message: '', uid }]
+            users: [{ socketId: socket.id, username, message: '', uid, rebuy }]
         };
         socket.join(roomId);
         console.log(`Room ${roomId} created`);
@@ -157,7 +157,7 @@ io.on('connection', (socket) => {
         rooms[roomId].total = 0;
         rooms[roomId].users.forEach((user) => {
             if (user.username === username) {
-                user.message = (Number(message) - rooms[roomId].stack);
+                user.message = (Number(message) - rooms[roomId].stack - user.rebuy);
                 message = user.message;
             }
             rooms[roomId].total += Number(user.message);

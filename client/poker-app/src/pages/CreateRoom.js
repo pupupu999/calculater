@@ -12,6 +12,7 @@ export default function CreateRoom() {
     const [password, setPassword] = useState('');
     const [roomStack, setRoomStack] = useState('');
     const [roomMember, setRoomMember] = useState('');
+    const [rebuy, setRebuy] = useState('');
     const navigate = useNavigate();
 
     const { user, isLoggedIn, loading } = useUser();
@@ -52,7 +53,8 @@ export default function CreateRoom() {
                 roomStack,
                 roomMember,
                 password,
-                uid: user.uid
+                uid: user.uid,
+                rebuy
             }, (response) => {
                 if (response.success) {
                     alert('部屋が作成できました');
@@ -107,7 +109,13 @@ export default function CreateRoom() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-
+                    <input
+                        className={styles.roomInputField}
+                        type="number"
+                        placeholder="リバイ"
+                        value={rebuy}
+                        onChange={(e) => setRebuy(e.target.value)}
+                    />
                     <button className={styles.roomCreateButton} onClick={createRoom}>作成</button>
                 </div>
             </div>
