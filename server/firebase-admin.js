@@ -1,11 +1,9 @@
 import admin from 'firebase-admin';
-import fs from 'fs';
-import path from 'path';
 
-const serviceAccountPath =path.resolve('server/serviceAccountKey.json');
-const serviceAccount = JSON.parse(fs.readFileSync(serviceAccountPath, 'utf8'));
+// 環境変数から秘密鍵のJSON文字列を読み込む
+const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
-if (!admin.apps.length) {
+if(!admin.apps.length) {
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
     });
@@ -14,4 +12,4 @@ if (!admin.apps.length) {
 const db = admin.firestore();
 const auth = admin.auth();
 
-export default {admin, db, auth };
+export { admin, db, auth };
