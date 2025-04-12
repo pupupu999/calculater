@@ -24,6 +24,7 @@
     "helmet": "^8.1.0",
     "igniteui-react-charts": "^18.7.3",
     "igniteui-react-core": "^18.7.3",
+    "jsonwebtoken": "^9.0.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-feather": "^2.0.10",
@@ -31,6 +32,7 @@
     "react-router-dom": "^6.26.2",
     "react-scripts": "^5.0.1",
     "recharts": "^2.13.3",
+    "semver": "^7.7.1",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.13"
