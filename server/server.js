@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import express from 'express';
 import { Server } from 'socket.io';
-import { db } from './firebase-admin.js';
+import firebaseAdmin from './firebase-admin.js';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import path from 'path';
 import { fileURLToPath } from 'url';
@@ -9,6 +9,8 @@ import auth from './routes/auth.js';
 import secure from './routes/secure.js';
 import helmet from 'helmet';
 import cors from 'cors';
+
+const db = firebaseAdmin.db;
 
 let rooms = {}; // 各ルームIDにパスワードを保持
 
@@ -64,11 +66,11 @@ app.use('/api/secure', secure);
 
 
 // 静的ファイルの配信設定
-app.use(express.static(path.join(__dirname, '../frontend/poker-app/build')));
+app.use(express.static(path.join(__dirname, '../client/poker-app/build')));
 
 // React のエントリポイントを配信
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../frontend/poker-app/build', 'index.html'));
+    res.sendFile(path.join(__dirname, '../client/poker-app/build', 'index.html'));
 });
 
 // HTTP サーバーを作成
