@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import express from 'express';
 import { Server } from 'socket.io';
-import { db } from '../frontend/poker-app/src/firebase.js';
+import { db } from '../client/poker-app/src/firebase.js';
 import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
 import path from 'path';
 import { fileURLToPath } from 'url';
