@@ -22,7 +22,7 @@ const RankingCard=({user,rank})=>{
     return(
         <div className={styles.cardSet}>
             <div className={styles.rank}>{rank}{getRankOrdinal(rank)}</div>
-            <div className={styles.rankingCard}>
+            <div className={`${styles.rankingCard} ${rank === 1 ? styles.first : rank === 2 ? styles.second : rank === 3 ? styles.third : ''}`}>
                 <div className={styles.rankingIcon}>
                     <img src={getRankImage(rank)} alt="king" className={styles.rankingKurupin}/>
                     <span className={styles.rankingUsername}>{user.username}</span>

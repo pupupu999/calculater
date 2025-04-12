@@ -8,56 +8,70 @@
 
 .titleBackground {
    background-color: #ffffff;
-   overscroll-behavior: contain;
-   background-image:url('../../public/img/tallies_laptop.png');
-   min-height: 100vh;
-   margin-top: 60px;
-   background-size: auto 100vh; /* 画像を縮尺して全体をカバー */
-   background-repeat: no-repeat; /* 画像の繰り返しを防止 */
-   background-position: center; /* 画像を中央揃え */
-}
-
-@media screen and (max-width: 706px){
-   .titleBackground{
-      background-image:url('../../public/img/tallies_phone.png');
-   }
+   background-image: url('../../public/img/tallies_laptop.png');
+   background-repeat: no-repeat;
+   background-position: center;
+   background-size: cover;
+   height: 100vh; /* 画面の高さいっぱい */
+   display: flex;
+   align-items: center;
+   flex-direction: column;
+   justify-content: flex-end;
 }
 
 .titleContent {
    display: flex;
    flex-direction: column;
-   justify-content: center;
    align-items: center;
-   flex-grow: 1;
-   padding-top: 30%;
+   justify-content: center;
+   width: 100%;
+   height: 100%; 
+   margin-top: 60vh;
 }
 
 .titleButton {
-   padding: 45px 90px;
-   position: relative;
-   top: 120px;
-   font-size: 32px;
-   font-weight: bold;
+   font-size: 2.5vw; /* 画面幅に対する相対フォントサイズ */
+   padding: 2vw 4vw;
+   border-radius: 2vw;
+   border: 0.4vw solid #121212;
    color: #121212;
    background-color: #ffffff;
-   border-radius: 40px;
-   border:4px solid #121212;
+   font-weight: bold;
    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
 }
 
-@media screen and (max-width:706px){
-   .titleButton{
-      padding: 30px 60px;
-      font-size: 20px;
-      border-radius: 30px;
-      border:3px solid #121212;
-      top: 400px;
+@media screen and (max-width: 706px){
+   .titleBackground {
+      background-image: url('../../public/img/tallies_phone.png');
+   }
+   
+   .titleButton {
+      font-size: 5vw; /* 画面幅に対する相対フォントサイズ */
+      padding: 8vw 16vw;
+      border-radius: 5vw;
+      border: 1vw solid #121212;
+      color: #121212;
+      background-color: #ffffff;
+      font-weight: bold;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+   }
+
+   .titleContent {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%; 
+      margin-top: 50vh;
    }
 }
 
 .username {
    float:left;
-   font-size: 40px;
+   font-size: clamp(30px, 5vw, 40px);
+   word-break: break-word;
+   font-family: 'Arial Black', monospace;
    padding: 15px;
    margin-left: 30px;
    color: #121212;
@@ -85,7 +99,10 @@
 
 .main {
    display: flex;
+   flex-direction: row;
    justify-content: space-around;
+   flex-wrap: wrap;
+   gap: 20px;
 }
 
 .title {
@@ -107,6 +124,7 @@
 .button_row {
    display: flex;
    align-items: stretch;
+   justify-content: space-around;
    @media screen and (max-width: 706px) {
       padding: 20px 10px;
    }
@@ -185,6 +203,7 @@
    margin-top: 150px;
 }
 
+/*Header.js*/
 .header {
    display: flex;
    position: fixed; /* 固定配置 */
@@ -207,51 +226,109 @@
    object-fit: contain;
 }
 
-.nav ul {
-   list-style: none;
-   display: flex;
-   margin: 0;
-   padding: 0 0 0 20px;
-   gap: 10%;
-}
-
-.nav li {
-   display: inline-block;
-}
-
-.nav li:hover {
-   border-bottom: 2px solid white;
-}
-
-.nav li a {
-   color: white;
-   text-decoration: none;
-}
-
-.nav {
-   display: none;
-   flex-direction: column;
-   position: absolute;
-   top: 60px; /* ヘッダーの高さに合わせる */
-   left: 0;
-   right: 0;
-   background-color: #333;
-}
-
-.nav.active {
-   display: flex;
-}
-
 .hamburger {
    display: block;
    font-size: 24px;
+   cursor: pointer;
+   z-index: 1001;
+}
+
+ /* スマホ用（右スライド） */
+@media screen and (max-width: 706px) {
+   .nav {
+      position: fixed;
+      top: 0;
+      right: -250px;
+      width: 250px;
+      height: 100vh;
+      background-color: #333;
+      padding-top: 70px;
+      flex-direction: column;
+      align-items: center;
+      transition: right 0.3s ease;
+      z-index: 999;
+   }
+
+   .nav.active {
+      right: 0;
+   }
+
+   .nav ul {
+      flex-direction: column;
+      width: 100%;
+      padding: 0;
+      margin: 0;
+   }
+
+   .nav li {
+      width: 100%;
+      text-align: center;
+      padding: 20px 0;
+      border-bottom: 1px solid #444;
+   }
+
+   .nav li a {
+      color: white;
+      text-decoration: none;
+      font-size: 18px;
+      font-family: 'Arial Black', monospace;
+   }
+}
+
+@media screen and (min-width: 707px) {
+   .nav {
+      position: absolute;
+      top: 70px; /* ヘッダーの高さ */
+      left: 0;
+      right: 0;
+      display: none; /* 初期は非表示 */
+      background-color: #333;
+      justify-content: center;
+      align-items: center;
+      padding: 10px 0;
+      z-index: 999;
+   }
+
+   .nav.active {
+      display: flex;
+   }
+
+   .nav ul {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      list-style: none;
+      gap: 10%;
+      margin: 0;
+      padding: 0;
+   }
+
+   .nav li {
+      display: inline-block;
+   }
+
+   .nav li a {
+      color: white;
+      text-decoration: none;
+      font-size: 24px;
+      font-family: 'Arial Black', monospace;
+      white-space: nowrap;     
+      overflow: hidden;        
+      text-overflow: ellipsis; 
+   }
+
+   .nav li:hover {
+      border-bottom: 2px solid white;
+   }
 }
 
 .chart {
    display: flex;
    justify-content: center;
    align-items: center;
-   width: 95%;
+   font-weight: bold;
+   width: 90%;
+   height: 300px;
 }
 
 .score {
@@ -259,10 +336,13 @@
    justify-content: center;
    align-items: center;
    flex-flow: column;
+   font-family: 'Arial Black', monospace;
+   font-weight: bold;
 }
 
 .content {
-   border-bottom: 1px solid #ccc;
+   border-bottom: 3px solid #9b9b9b;
+   font-size: 20px;
    color:#121212;
 }
 
@@ -284,25 +364,16 @@
 .table td {
    padding: 12px 15px;
    text-align: center;
+   font-weight: bold;
 }
 
 .table th {
-   background-color: #413F3F; /* ヘッダー背景色 */
-   font-weight: bold;
    color: white;
-   border: 3px solid #DDE6ED; /* セルの境界線 */
-}
-
-.table tr {
-   background-color: #AAAAAA; /* 偶数行の色 */
-}
-
-.table tr:nth-child(odd) {
-   background-color: #ffffff; /* 奇数行の色 */
+   border: 3px solid #121212; /* セルの境界線 */
 }
 
 .table td {
-   border: 3px solid #DDE6ED; /* セルの境界線 */
+   border: 3px solid #121212; /* セルの境界線 */
 }
 
 .loginloc {
@@ -316,11 +387,12 @@
 }
 
 .body {
-   background-color: #ffffff; /* コンテンツ部分の背景色 */
+   background-color: #f5f5f5; /* コンテンツ部分の背景色 */
    border-radius: 10px;
    padding: 20px;
    width: 100%;
    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+   font-family: 'Arial Black', monospace;
 }
 
 
@@ -332,25 +404,31 @@
    border-radius: 5px;
    outline: none;
    transition: border-color 0.3s;
+   font-size: 32px;
+   padding: 15px 50px;
+   border-radius: 10px;
+   font-weight: bold;
 }
 
 .roomInput:focus {
-   border-color: #007bff; /* フォーカス時の色 */
+   border: 2px solid;
+   border-color: #007bff;
 }
 
 .roomButton {
-   padding: 10px;
+   padding: 15px;
    font-size: 16px;
-   background-color: #007bff;
-   color: #ffffff;
-   border: none;
-   border-radius: 5px;
+   background-color: #ffffff;
+   color: #121212;
+   border: 5px solid #121212;
+   border-radius: 10px;
    cursor: pointer;
    transition: background-color 0.3s;
 }
 
 .roomButton:hover {
-   background-color: #0056b3;
+   background-color: #121212;
+   color:#ffffff;
 }
 
 h2 {
@@ -402,6 +480,65 @@ p {
    background: #f0f0f0; /* スクロールバーのトラック（背景）の色 */
 }
 
+/*CreateRoom.js*/
+.roomFormContainer {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   background-color: #f5f5f5;
+   min-height: 100vh;
+   padding: 20px;
+}
+
+.roomInputBox {
+   background-color: #ffffff;
+   padding: 30px 20px;
+   border-radius: 20px;
+   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+   width: 100%;
+   max-width: 400px;
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+}
+
+.roomFormTitle {
+   font-size: 24px;
+   font-weight: bold;
+   font-family: 'Arial Black', monospace;
+   text-align: center;
+}
+
+.roomInputField {
+   padding: 14px;
+   font-size: 16px;
+   border: none;
+   border-radius: 12px;
+   background-color: #000;
+   color: #fff;
+   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.3);
+}
+
+.roomInputField::placeholder {
+   color: #ccc;
+}
+
+.roomCreateButton {
+   padding: 14px;
+   font-size: 18px;
+   background-color: #50a3d9;
+   color: white;
+   border: none;
+   border-radius: 30px;
+   font-weight: bold;
+   cursor: pointer;
+   transition: background-color 0.3s;
+}
+
+.roomCreateButton:hover {
+   background-color: #3992c9;
+}
+
 .userItem {
    display: flex;
    justify-content: space-between;
@@ -410,6 +547,105 @@ p {
    background-color: #f9f9f9;
    border: 1px solid #ddd;
    border-radius: 5px;
+}
+
+.settlementContainer {
+   padding: 20px;
+   text-align: center;
+   background-color: #f5f5f5;
+   font-family: 'Arial Black', monospace;
+   font-weight: bold;
+}
+
+.settlementContent {
+   display: flex;
+   justify-content: space-between;
+   gap: 20px;
+   margin-top: 20px;
+   flex-wrap: wrap;
+}
+
+.inputSection, .resultSection {
+   flex: 1;
+   min-width: 300px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   gap: 15px;
+}
+
+.inputCard, .totalCard {
+   background-color: #ddd;
+   font-size: 48px;
+   padding: 20px 30px;
+   border-radius: 15px;
+   font-weight: bold;
+}
+
+.userResultCard {
+   display: flex;
+   justify-content: space-between;
+   width: 80%;
+   padding: 10px 20px;
+   border-radius: 12px;
+   background-color: #ddd;
+   font-size: 24px;
+   font-weight: bold;
+}
+
+.userLabel {
+   text-align: left;
+   width: 50%;
+}
+
+.userScore {
+   text-align: right;
+   width: 50%;
+}
+
+.roomButton_row {
+   display: flex;
+   justify-content: center;
+   gap: 16px;
+   margin-top: 20px;
+}
+
+.confirmButton {
+   background-color: #50d971;
+   color: white;
+   font-weight: bold;
+   padding: 20px 40px;
+   border: none;
+   border-radius: 10px;
+}
+
+.deleteButton {
+   background-color: #e44;
+   color: white;
+   font-weight: bold;
+   padding: 20px 40px;
+   border: none;
+   border-radius: 10px;
+}
+
+.inputRow {
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   gap: 10px;
+   margin-bottom: 20px;
+   width: 100%;
+   max-width: 500px;
+   margin-left: auto;
+   margin-right: auto;
+}
+
+.inputRow .roomInput {
+   flex: 1;
+}
+
+.inputRow .roomButton {
+   white-space: nowrap;
 }
 
 /*Spinner.js*/
@@ -446,18 +682,20 @@ p {
    border-radius: 40px;
    border: 5px solid #121212;
    margin: 10px;
+   width:40vw;
+   max-width: 600px;
 }
 
 .miniCardPlus {
    margin:0 50px 0 auto;
-   font-size: 80px;
+   font-size: clamp(24px, 8vw, 80px);
    font-weight: bold;
    color: #82ca9d;
 }
 
 .miniCardMinus {
    margin:0 50px 0 auto;
-   font-size: 80px;
+   font-size: clamp(24px, 8vw, 80px);
    font-weight: bold;
    color: #e02929;
 }
@@ -471,9 +709,33 @@ p {
 }
 
 /*RankingCard.js*/
+.rankingMain {
+   display: flex;
+   justify-content: space-around;
+}
+
 .cardSet {
    margin:0 30px;
 }
+
+.first {
+   background: linear-gradient(145deg, #d0a900, #fff9e6, #d0a900);
+   box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+   position: relative;
+}
+
+.second {
+   background: linear-gradient(145deg, #848788, #f8f8f8, #848788);
+   box-shadow: 0 0 10px rgba(192, 192, 192, 0.5);
+   position: relative;
+}
+
+.third {
+   background: linear-gradient(145deg, #B87333, #f6d5b7, #B87333);
+   box-shadow: 0 0 10px rgba(205, 127, 50, 0.5);
+   position: relative;
+}
+
 .rankingCard {
    display: flex;
    align-items: center;
@@ -499,11 +761,13 @@ p {
 .rank {
    font-weight: bold;
    font-size: 30px;
+   font-family: 'Arial Black', monospace;
 }
 
 .rankingUsername {
    font-size: 30px;
    font-weight: bold;
+   font-family: 'Arial Black', monospace;
 }
 
 .rankingMiniCard {
@@ -533,6 +797,7 @@ p {
    float:left;
    font-size: 40px;
    font-weight: bold;
+   font-family: 'Arial Black', monospace;
    padding: 15px;
    margin-left: 10px;
    color: #121212;
@@ -544,12 +809,441 @@ p {
    border-radius: 10px;
    border: 5px solid #121212;
    height: 70vh;
-   width:50%;
+   width:50vw;
    margin-top: 1%;
    margin-right: 3%;
    overflow: auto;
 }
 
 .userRankContainer {
-   width: 50%;
+   width: 50vw;
+}
+
+/*login.js*/
+.loginContainer {
+   background-color: #f5f5f5;
+   min-height: 100vh;
+   display: flex;
+   justify-content: center;
+   align-items: center;
+}
+
+.loginBox {
+   background-color: #fff;
+   padding: 40px;
+   border-radius: 15px;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   width: 80%;
+   max-width: 800px;
+   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.loginTitle {
+   font-size: 24px;
+   font-weight: bold;
+   font-family: 'Arial Black', monospace;
+   margin-bottom: 30px;
+}
+
+.backButton {
+   align-self: flex-start;
+   display: flex;
+   align-items: center;
+   background: none;
+   border: none;
+   font-size: 14px;
+   color: #50a3d9;
+   cursor: pointer;
+   margin-bottom: 10px;
+   margin-left: 0;
+   padding: 0;
+}
+
+.backButton:hover {
+   text-decoration: underline;
+}
+
+@media screen and (min-width: 707px){
+   .loginTitle {
+      font-size: 36px;
+      font-weight: bold;
+      font-family: 'Arial Black', monospace;
+      margin-bottom: 30px;
+   }
+}
+
+.loginContent {
+   display: flex;
+   justify-content: space-between;
+   width: 100%;
+   gap: 40px;
+   flex-wrap: wrap;
+}
+
+.loginLeft,
+.loginRight {
+   flex: 1;
+   display: flex;
+   flex-direction: column;
+   gap: 20px;
+   min-width: 250px;
+}
+
+.loginInput {
+   padding: 15px;
+   border-radius: 10px;
+   font-size: 16px;
+}
+
+.forgotPassword {
+   font-size: 14px;
+   color: #50a3d9;
+   cursor: pointer;
+}
+
+.emailLoginButton {
+   background-color: #50a3d9;
+   color: white;
+   border: none;
+   padding: 15px;
+   border-radius: 30px;
+   font-size: 16px;
+   cursor: pointer;
+}
+
+.socialLoginButton {
+   background-color: #fff;
+   border: 1px solid #ccc;
+   padding: 15px;
+   border-radius: 30px;
+   font-size: 16px;
+   color: #50a3d9;
+   text-align: center;
+   cursor: pointer;
+   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/*CreateRoomButton.js*/
+.cardButton {
+   position: relative;
+   width: clamp(120px, 20vw, 200px);/* ボタンの幅（調整可） */
+   height: clamp(170px, 28vw, 280px);/* ボタンの高さ（調整可） */
+   cursor: pointer;
+}
+
+.cardButton:hover{
+   transform: scale(1.02);
+}
+
+.createBackCard, .createFrontCard {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background: #ffffff;
+   border: 5px solid #121212;
+   border-radius: 16px;
+   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+   font-family: 'Arial Black', monospace;
+}
+
+/* 背面カード */
+.createBackCard {
+   transform: rotate(-18deg);
+   z-index: 1;
+   left: -24px;
+   top: -8px;
+}
+
+/* 前面カード */
+.createFrontCard {
+   transform: rotate(-5deg);
+   z-index: 2;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   left: 12px;
+}
+
+/*SearchRoomButton.js*/
+.searchBackCard, .searchFrontCard {
+   position: absolute;
+   width: 100%;
+   height: 100%;
+   background: #ffffff;
+   border: 5px solid #121212;
+   border-radius: 16px;
+   box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+   font-family: 'Arial Black', monospace;
+}
+
+/* 背面カード */
+.searchBackCard {
+   transform: rotate(5deg);
+   z-index: 1;
+   left: 24px;
+   top: -8px;
+}
+
+/* 前面カード */
+.searchFrontCard {
+   transform: rotate(16deg);
+   z-index: 2;
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   left: 60px;
+}
+
+/*数字・マーク */
+.corner {
+   position: absolute;
+   font-size: 30px;
+   font-weight: bold;
+   writing-mode: vertical-rl;
+   text-orientation: upright;
+   color: red;
+}
+
+.topLeft {
+   top: 10px;
+   left: 10px;
+}
+
+.bottomRight {
+   bottom: 10px;
+   right: 10px;
+   transform: rotate(180deg);
+}
+
+/* 真ん中のテキスト */
+.createCenterText {
+   transform: rotate(5deg);
+   text-align: center;
+   font-size: 32px;
+   font-weight: 900;
+   color: #121212;
+   line-height: 1.2;
+}
+
+.searchCenterText {
+   transform: rotate(-16deg);
+   text-align: center;
+   font-size: 32px;
+   font-weight: 900;
+   color: #121212;
+   line-height: 1.2;
+}
+
+/*ボタンサイズスマホ対応*/
+@media screen and (max-width: 706px) {
+   /* 縦並び全体レイアウト */
+   .main {
+      flex-direction: column;
+      align-items: center;
+   }
+
+   .line {
+      width: 95%;
+      border: 0;
+      height: 3px;
+      background: #121212;
+      @media screen and (max-width: 706px) {
+         margin-bottom: 80px;
+      }
+      margin-bottom: 10px;
+      margin-left: auto;
+      margin-right: auto;
+   }
+
+   .title {
+      width: 100%;
+      text-align: center;
+   }
+
+   /*カードを画面サイズに合わせる */
+   .card {
+      width: 100%;
+      max-width: 360px;
+      margin: 0 auto;
+      flex-direction: row;
+      justify-content: center;
+   }
+
+   .cardKurupin {
+      width: 100px;
+      height: 100px;
+      bottom: 20px;
+      right: 10px;
+   }
+
+   .miniCardPlus,
+   .miniCardMinus {
+      font-size: 54px;
+      margin: 0 auto;
+   }
+
+   /* battle record の下配置と横幅調整 */
+   .record {
+      width: 100%;
+      padding: 20px;
+      box-sizing: border-box;
+   }
+
+   .button_row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 3px;
+   }
+
+   .image_container_topcenter {
+      margin: 0;
+      max-width: 60%;
+      margin-top: 15px;
+   }
+
+   .cardButton {
+      width: 120px;
+      height: 170px;
+   }
+
+   .cardButton:hover{
+      transform: scale(0.99);
+   }
+
+   /* CreateRoom ボタン位置調整 */
+   .createFrontCard {
+      left: 6px;
+      transform: rotate(-5deg);
+   }
+
+   .createBackCard {
+      left: -14px;
+      top: -6px;
+      transform: rotate(-18deg);
+   }
+
+   .createCenterText {
+      font-size: 24px;
+   }
+
+   /* SearchRoom ボタン位置調整 */
+   .searchFrontCard {
+      left: 15px;
+      transform: rotate(16deg);
+   }
+
+   .searchBackCard {
+      left: -10px;
+      top: -6px;
+      transform: rotate(5deg);
+   }
+
+   .searchCenterText {
+      font-size: 24px;
+   }
+
+   .corner {
+      font-size: 20px;
+   }
+
+   .table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 18px;
+      color: #121212;
+   }
+
+   .chart {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      height: 300px;
+   }
+
+   .rankingMain {
+      flex-direction: column;
+      align-items: center;
+   }
+
+   .rankingCard {
+      flex-direction: row;
+      padding: 4px 8px;
+      border-radius: 20px;
+   }
+
+   .rankingKurupin {
+      width: 80px;
+      height: 80px;
+      right: 10px;
+   }
+
+   .rankingUsername {
+      font-size: 20px;
+   }
+
+   .rankingMiniCard {
+      font-size: 24px;
+      padding: 10px;
+   }
+
+   .rank {
+      font-size: 24px;
+   }
+
+   .cardSet {
+      margin: 0 10px;
+   }
+
+   .userRankContainer, .rankingContainer {
+      width: 95vw;
+      margin: 10px 0;
+   }
+
+   .settlementContent {
+      flex-direction: column;
+      align-items: center;
+   }
+
+   .userResultCard {
+      width: 90%;
+      font-size: 20px;
+   }
+
+   .inputCard, .totalCard {
+      font-size: 36px;
+      padding: 15px 20px;
+   }
+
+   .confirmButton {
+      flex: 1;
+      font-size: 16px;
+      padding: 12px;
+   }
+
+   .deleteButton {
+      flex: 1;
+      font-size: 16px;
+      padding: 12px;
+      max-width: 50vw;
+   }
+
+   .inputRow {
+      flex-wrap: nowrap;
+   }
+
+   .inputRow .roomInput {
+      font-size: 16px;
+      padding: 12px;
+   }
+
+   .inputRow .roomButton {
+      font-size: 16px;
+      padding: 12px 16px;
+   }
 }

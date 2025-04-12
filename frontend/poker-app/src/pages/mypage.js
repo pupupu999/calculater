@@ -4,6 +4,8 @@ import Header from "../components/Header.js";
 import Record from "../components/BattleRecord.js";
 import Spinner from "../components/Spinner.js"
 import Card from "../components/Card.js";
+import CreateRoomButton from "../components/CreateRoomButton.js";
+import SearchRoomButton from "../components/SearchRoomButton.js";
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../hooks/useUser.js";
 
@@ -37,10 +39,10 @@ const MyPage = () => {
                     </div>
                     <div className={styles.button_row}>
                         <div className={styles.image_container_topcenter}>
-                            <img src="/img/room_cre.png" alt="create room" onClick={() => handleNavigation('/CreateRoom')} />
+                            <CreateRoomButton onClick={() => handleNavigation('/CreateRoom')} />
                         </div>
                         <div className={styles.image_container_topcenter}>
-                            <img src="/img/room_ser.png" alt="search room" onClick={() => handleNavigation('/JoinRoom')} />
+                            <SearchRoomButton onClick={() => handleNavigation('/JoinRoom')} />
                         </div>
                     </div>
                 </div>

@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/style.module.css';
 import { Table } from "antd";
 
@@ -29,6 +30,26 @@ const columns=[
 ];
 
 const TableFlame = ({tData}) => {
+    const [pageSize, setPageSize] = useState(5);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 706) {
+                setPageSize(3); 
+            } else {
+                setPageSize(5);
+            }
+        };
+
+        handleResize();
+        window.addEventListener('resize', handleResize);
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
+
+
     if (!tData || tData.length === 0) {
         // データが空の場合のエラーハンドリング
         return (
@@ -39,7 +60,7 @@ const TableFlame = ({tData}) => {
                     columns={columns}
                     dataSource={sampleData}
                     showSorterTooltip={{ target: "sorter-icon" }}
-                    pagination={{pageSize:5}}
+                    pagination={{pageSize}}
                 />
             </div>
         );
@@ -53,7 +74,7 @@ const TableFlame = ({tData}) => {
                 columns={columns}
                 dataSource={tData}
                 showSorterTooltip={{ target: "sorter-icon" }}
-                pagination={{pageSize:5}}
+                pagination={{pageSize}}
             />
         </div>
     );

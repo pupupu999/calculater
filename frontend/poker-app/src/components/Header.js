@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom'; 
+import { auth } from '../firebase.js'
 import styles from '../styles/style.module.css'; 
 const Header = () => {
     const [menuOpen, setMenuOpen] = useState(false);
@@ -19,10 +20,13 @@ const Header = () => {
         navigate('/mypage');
     }
 
-    const logout = () => {
-        sessionStorage.removeItem('userid');
-        sessionStorage.removeItem('login');
-        navigate('/');
+    const logout = async () => {
+        try{
+            await auth.signOut();
+            navigate('/');
+        }catch(error){
+            console.error("ログアウトに失敗しました:",error);
+        }
     }
 
     return (
@@ -33,10 +37,10 @@ const Header = () => {
             <nav className={`${styles.nav} ${menuOpen ? styles.active : ''}`}>
                 <ul>
                     <li><a onClick= {() => handleNavigation('/mypage')}>Home</a></li>
-                    <li><a onClick= {() => handleNavigation('/CreateRoom')}>部屋作成</a></li>
-                    <li><a onClick= {() => handleNavigation('/JoinRoom')}>部屋検索</a></li>
-                    <li><a onClick= {() => handleNavigation('/Ranking')}>ランキング</a></li>
-                    <li><a onClick= {() => logout()}>ログアウト</a></li>
+                    <li><a onClick= {() => handleNavigation('/CreateRoom')}>Create Room</a></li>
+                    <li><a onClick= {() => handleNavigation('/JoinRoom')}>Search Room</a></li>
+                    <li><a onClick= {() => handleNavigation('/Ranking')}>Ranking</a></li>
+                    <li><a onClick= {() => logout()}>Logout</a></li>
                 </ul>
             </nav>
             <div className={styles.hamburger} onClick={toggleMenu}>

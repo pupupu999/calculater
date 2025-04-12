@@ -44,21 +44,21 @@ const Ranking = () => {
     return(
         <div className={styles.background}>
             <Header />
-            <span className={styles.pagename}>ランキング</span>
+            <span className={styles.pagename}>Ranking</span>
             <hr className={styles.rankLine}/>
-            <div className={styles.main}>
+            <div className={styles.rankingMain}>
                 <div className={styles.userRankContainer}>
                     <RankingCard 
                         user={userWithRank}
                         rank={userWithRank.rank}
-                    />
+                />
                 </div>
                 <div className={styles.rankingContainer}>
                     <RankingTable 
                         users={sortedUsers}
                         loading={rankLoading}
                         error={error}
-                    />
+                />
                 </div>
             </div>
         </div>
