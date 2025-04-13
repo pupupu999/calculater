@@ -46,7 +46,7 @@ const Record = () => {
                                 if (!groupedData[date]) {
                                     groupedData[date] = { date, chip: 0, total_chip: 0 };
                                 }
-                                groupedData[date].chip += chip;
+                                groupedData[date].chip += Number(chip);
                                 groupedData[date].total_chip = total_chip;
                             });
                             const aggregatedData = Object.values(groupedData);
