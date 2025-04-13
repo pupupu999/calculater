@@ -19,9 +19,6 @@ const Ranking = () => {
         }
     }, [loading, isLoggedIn, navigate]);
 
-    console.log("ローディング:",loading);
-    console.log("ローディングランク:",rankLoading);
-
     if (loading || rankLoading) {
         return <Spinner />;
     }
