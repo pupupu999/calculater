@@ -1,16 +1,13 @@
 import { createServer } from 'http';
 import express from 'express';
 import { Server } from 'socket.io';
-import firebaseAdmin from './firebase-admin.js';
-import { doc, getDoc, setDoc, Timestamp } from 'firebase/firestore';
+import { db,admin } from './firebase-admin.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import auth from './routes/auth.js';
 import secure from './routes/secure.js';
 import helmet from 'helmet';
 import cors from 'cors';
-
-const db = firebaseAdmin.db;
 
 let rooms = {}; // 各ルームIDにパスワードを保持
 
@@ -56,6 +53,7 @@ app.use(cors({
 
 app.use(
     helmet({
+        crossOriginOpenerPolicy: false,
         contentSecurityPolicy: false
     })
 );
@@ -175,7 +173,7 @@ io.on('connection', (socket) => {
         rooms[roomId].total = 0;
         rooms[roomId].users.forEach((user) => {
             if (user.username === username) {
-                user.message = (Number(message) - rooms[roomId].stack - user.rebuy);
+                user.message = (Number(message) - (rooms[roomId].stack || 0) - (user.rebuy || 0));
                 message = user.message;
             }
             rooms[roomId].total += Number(user.message);
@@ -197,18 +195,20 @@ io.on('connection', (socket) => {
     });
 
     socket.on('save_score', async ({ users }) => {
+        console.log("save_score 受信:", users);
+        console.log("db type:", typeof db);
+        console.log("db instanceof Firestore:", db instanceof admin.firestore.Firestore);
         try {
             const newMember = users.map(user => user.username);
             users.forEach(async (user) => {
-                const currentDate = Timestamp.now();
-                const docRef = doc(db, 'users', user.uid);
-                const docSnap = await getDoc(docRef);
-                //cloud firestoreにデータを保存する
-                if (docSnap.exists()&&docSnap.data().results) {
-                    //今までの記録がある場合、データを更新する
+                const currentDate = admin.firestore.Timestamp.now();
+                const docRef = db.collection('users').doc(user.uid);
+                const docSnap = await docRef.get();
+    
+                if (docSnap.exists && docSnap.data().results) {
                     const prevData = docSnap.data().results.day_value;
                     const newTotal = prevData[prevData.length - 1].total_chip + Number(user.message);
-                    const newData = [...prevData, { date: currentDate, chip: user.message, total_chip: newTotal ,member: newMember}];
+                    const newData = [...prevData, { date: currentDate, chip: user.message, total_chip: newTotal, member: newMember }];
                     const prevScore = docSnap.data().results.count.games;
                     const prevWins = docSnap.data().results.count.wins;
                     const prevLosses = docSnap.data().results.count.losses;
@@ -216,23 +216,23 @@ io.on('connection', (socket) => {
                     const newWins = Number(user.message) < 0 ? prevWins : prevWins + 1;
                     const newLosses = Number(user.message) < 0 ? prevLosses + 1 : prevLosses;
                     const prevFriends = docSnap.data().friends;
-                    const newFriends= Array.from(new Set([...prevFriends,...newMember]));
-                    //更新したデータを記録する
-                    await setDoc(docRef, {
+                    const newFriends = Array.from(new Set([...prevFriends, ...newMember]));
+    
+                    await docRef.set({
                         results: {
                             day_value: newData,
                             count: { games: newScore, wins: newWins, losses: newLosses }
                         },
                         friends: newFriends
                     }, { merge: true });
-                } else if(docSnap.exists()){
-                    //一回目の記録の場合、そのままその回の記録を保存する
+                } else if (docSnap.exists) {
                     const newTotal = Number(user.message);
                     const newData = [{ date: currentDate, chip: user.message, total_chip: newTotal, member: newMember }];
                     const newScore = 1;
                     const newWins = Number(user.message) < 0 ? 0 : 1;
                     const newLosses = Number(user.message) < 0 ? 1 : 0;
-                    await setDoc(docRef, {
+    
+                    await docRef.set({
                         results: {
                             day_value: newData,
                             count: { games: newScore, wins: newWins, losses: newLosses }

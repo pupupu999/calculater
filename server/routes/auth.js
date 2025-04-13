@@ -1,8 +1,7 @@
 import express from 'express';
-import firebaseAdmin from '../firebase-admin.js';
+import { db } from '../firebase-admin.js';
 
 const router = express.Router();
-const db = firebaseAdmin.db;
 
 router.post('/sync-user', async (req, res) => {
     const { uid, email, displayName } = req.body;

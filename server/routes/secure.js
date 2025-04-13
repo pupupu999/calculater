@@ -1,14 +1,12 @@
 import express from 'express';
 import { checkAuth } from '../middleware/authMiddleware.js';
-import firebaseAdmin from '../firebase-admin.js';
-import { doc, getDoc } from 'firebase/firestore';
+import { db } from '../firebase-admin.js';
 
 const router = express.Router();
-const db = firebaseAdmin.db;
 
 router.get('/mypage', checkAuth, async (req, res) => {
     const uid = req.user.uid;
-    const userDoc = await getDoc(doc(db, 'users', uid));
+    const userDoc = await db.collection('users').doc(uid).get();
     res.status(200).json({ user: userDoc.data() });
 });
 
