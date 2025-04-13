@@ -28,7 +28,7 @@ export default function CreateRoom() {
             return;
         }
 
-        const newSocket = io(`${window.location.hostname}:3001`, {
+        const newSocket = io("https://chipin-fdzx.onrender.com", {
             transports: ["websocket"],
             withCredentials: true
         });

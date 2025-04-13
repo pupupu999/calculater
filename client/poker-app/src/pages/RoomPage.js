@@ -25,7 +25,7 @@ export default function RoomPage() {
             return;
         }
 
-        const socket = io(`${window.location.hostname}:3001`, {
+        const socket = io("https://chipin-fdzx.onrender.com", {
             transports: ["websocket"],
             withCredentials: true
         });

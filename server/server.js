@@ -23,7 +23,7 @@ const app = express();
 
 // 本番環境では変更する！（サーバーへのフロントのアクセス制限）
 app.use(cors({
-    origin:"*",
+    origin:["https://chipin-fdzx.onrender.com","http://localhost:3000"]
     credentials: true
 }));
 
