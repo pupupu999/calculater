@@ -56,7 +56,7 @@ export default function JoinRoom() {
             password,
             username: user.username,
             uid: user.uid,
-            rebuy
+            rebuy: Number(rebuy) || 0
         }, (response) => {
             if (response.success) {
                 navigate(`/room/${roomId}`);

@@ -84,6 +84,7 @@ export default function RoomPage() {
             username: user.username,
             message
         });
+        console.log('メッセージ送信');
         setMessage('');
     };
 

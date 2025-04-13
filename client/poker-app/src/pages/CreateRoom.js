@@ -54,7 +54,7 @@ export default function CreateRoom() {
                 roomMember,
                 password,
                 uid: user.uid,
-                rebuy
+                rebuy: Number(rebuy) || 0
             }, (response) => {
                 if (response.success) {
                     alert('部屋が作成できました');
