@@ -68,6 +68,7 @@ export default function RoomPage() {
         });
 
         socket.on('room_deleted', () => {
+            console.log("room_deleted を受信しました！");
             alert('部屋が削除されました');
             navigate('/mypage');
         });
