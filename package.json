@@ -4,8 +4,12 @@
   "private": true,
   "type": "module",
   "homepage": "./",
+  "resolutions": {
+    "semver": "^7.5.4"
+  },
   "scripts": {
     "dev": "node server/server.js",
+    "postinstall": "npx npm-force-resolutions && npm install",
     "start": "NODE_ENV=production node server/server.js",
     "build": "echo 'No build needed for server'",
     "start-client": "cd client/poker-app && HOST=0.0.0.0 PORT=3000 react-scripts start",
@@ -40,6 +44,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "concurrently": "^9.1.2",
-    "eslint": "^8"
+    "eslint": "^8",
+    "npm-force-resolutions": "^0.0.10"
   }
 }
