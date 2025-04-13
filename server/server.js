@@ -23,7 +23,10 @@ const app = express();
 
 // 本番環境では変更する！（サーバーへのフロントのアクセス制限）
 app.use(cors({
-    origin:["https://chipin-fdzx.onrender.com","http://localhost:3000"]
+    origin:[
+        "https://my-project-30c6b.web.app",
+        "http://localhost:3000"
+    ],
     credentials: true
 }));
 
@@ -80,7 +83,10 @@ const server = createServer(app);
 // Socket.IO サーバーを初期化
 const io = new Server(server, {
     cors: {
-        origin: "*", // 本番環境では変更する
+        origin: [
+            "https://my-project-30c6b.web.app",
+            "http://localhost:3000"
+        ], 
         methods: ["GET", "POST"],
         credentials: true
     }
