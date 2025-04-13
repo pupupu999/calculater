@@ -25,10 +25,15 @@ export default function RoomPage() {
             return;
         }
 
-        const socket = io("https://chipin-fdzx.onrender.com", {
-            transports: ["websocket"],
-            withCredentials: true
-        });
+        const socket = io(
+            window.location.hostname.includes('localhost')
+                ? 'http://localhost:3001'
+                : 'https://chipin-fdzx.onrender.com',
+            {
+                transports: ['websocket'],
+                withCredentials: true,
+            }
+        );
         socketRef.current = socket;
 
         // サーバーに参加通知

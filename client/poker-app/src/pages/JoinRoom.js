@@ -27,10 +27,15 @@ export default function JoinRoom() {
             return;
         }
 
-        const newSocket = io(`${window.location.hostname}:3001`, {
-            transports: ["websocket"],
-            withCredentials: true
-        });
+        const newSocket = io(
+            window.location.hostname.includes('localhost')
+                ? 'http://localhost:3001'
+                : 'https://chipin-fdzx.onrender.com',
+            {
+                transports: ['websocket'],
+                withCredentials: true,
+            }
+        );
         socketRef.current = newSocket;
 
         return () => {
