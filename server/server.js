@@ -64,14 +64,15 @@ app.use(express.json());
 app.use('/api/auth', auth);
 app.use('/api/secure', secure);
 
-
-// 静的ファイルの配信設定
-app.use(express.static(path.join(__dirname, '../client/poker-app/build')));
-
-// React のエントリポイントを配信
-app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/poker-app/build', 'index.html'));
-});
+//開発用にだけ使う
+if(process.env.NODE_ENV !== 'production') {
+    // 静的ファイルの配信設定
+    app.use(express.static(path.join(__dirname, '../client/poker-app/build')));
+    // React のエントリポイントを配信
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../client/poker-app/build', 'index.html'));
+    });
+}
 
 // HTTP サーバーを作成
 const server = createServer(app);
