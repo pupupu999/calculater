@@ -27,6 +27,11 @@ app.use(cors({
     credentials: true
 }));
 
+//サーバーがスリープ状態になるのを防ぐ
+app.get('/api/ping', (req, res) => {
+    res.status(200).send('pong');
+});
+
 // app.use(
 //     helmet({
 //         crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
@@ -158,7 +163,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('delete_room', ({ roomId }) => {
+        console.log("roomId確認:",roomId);
+        console.log("部屋存在確認:",rooms[roomId]);
         if (rooms[roomId]) {
+            console.log("部屋の削除を行います",roomId);
             //部屋の情報を削除
             delete rooms[roomId]
             //部屋に参加していたユーザーを退室させる
