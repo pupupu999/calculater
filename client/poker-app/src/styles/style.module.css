@@ -8,7 +8,7 @@
 
 .titleBackground {
    background-color: #ffffff;
-   background-image: url('../../public/img/tallies_laptop.png');
+   background-image: url('../../public/img/CHIPIN_laptop.png');
    background-repeat: no-repeat;
    background-position: center;
    background-size: cover;
@@ -42,7 +42,7 @@
 
 @media screen and (max-width: 706px){
    .titleBackground {
-      background-image: url('../../public/img/tallies_phone.png');
+      background-image: url('../../public/img/CHIPIN_phone.png');
    }
    
    .titleButton {

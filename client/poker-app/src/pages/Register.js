@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Spinner from '../components/Spinner.js';
 import { auth } from '../firebase.js';
 import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
 import { syncUserToServer } from '../utils/syncUser.js';
@@ -10,10 +11,12 @@ export default function Register() {
 const [username, setUsername] = useState('');
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
+const [loading, setLoading] = useState(false);
 
 const navigate=useNavigate();
 
 const handleRegister = async () => {
+    setLoading(true);
     try {
         const result = await createUserWithEmailAndPassword(auth, email, password);
         await updateProfile(result.user, {displayName: username});
@@ -27,8 +30,14 @@ const handleRegister = async () => {
             console.error(err);
             alert('登録に失敗しました');
         }
+    } finally {
+        setLoading(false);
     }
 };
+
+if(loading){
+    return <Spinner />;
+}
 
 return (
     <div className={styles.loginContainer}>
