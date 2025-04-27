@@ -88,7 +88,7 @@ export default function JoinRoom() {
                         />
                         <input
                             className={styles.roomInputField}
-                            type="text"
+                            type="password"
                             placeholder="パスワード"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}

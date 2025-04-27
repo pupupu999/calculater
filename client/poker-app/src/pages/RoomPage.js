@@ -10,6 +10,7 @@ export default function RoomPage() {
     const { user, isLoggedIn, loading } = useUser();
     const navigate = useNavigate();
     const socketRef = useRef(null);
+    const isHostRef = useRef(false);
     const [users, setUsers] = useState([]);
     const [total, setTotal] = useState(0);
     const [message, setMessage] = useState('');
@@ -35,12 +36,14 @@ export default function RoomPage() {
         );
         socketRef.current = socket;
 
+        isHostRef = isHost;
+
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
                 const navEntries = performance.getEntriesByType('navigation');
                 const navType = navEntries.length > 0 ? navEntries[0].type : null;
                 if (navType !== 'reload') {
-                    if (isHost && socketRef.current) {
+                    if (isHostRef.current && socketRef.current) {
                         socketRef.current.emit('delete_room', { roomId });
                     }
                 }
@@ -91,7 +94,7 @@ export default function RoomPage() {
             socket.disconnect();
         };
         
-    }, [loading, isLoggedIn, user, roomId]);
+    }, [loading, isLoggedIn, user, roomId, isHost]);
 
     const sendMessage = () => {
         if (!socketRef.current) return;
