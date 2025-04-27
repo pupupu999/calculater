@@ -90,6 +90,11 @@ export default function RoomPage() {
         });
 
         return () => {
+            console.log("RoomPage unmount: クリーンアップ処理発動");
+            if (isHostRef.current && socketRef.current) {
+                console.log("ホストなので部屋を削除します");
+                socketRef.current.emit('delete_room', { roomId });
+            }
             document.removeEventListener('visibilitychange', handleVisibilityChange);
             socket.disconnect();
         };
