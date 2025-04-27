@@ -36,7 +36,7 @@ export default function RoomPage() {
         );
         socketRef.current = socket;
 
-        isHostRef = isHost;
+        isHostRef.current = isHost;
 
         const handleVisibilityChange = () => {
             if (document.visibilityState === 'hidden') {
