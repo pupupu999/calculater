@@ -1,4 +1,3 @@
-import Header from "../components/Header.js";
 import Spinner from "../components/Spinner.js";
 import styles from "../styles/style.module.css";
 import React, { useEffect, useState, useRef } from 'react';
@@ -126,7 +125,6 @@ export default function RoomPage() {
 
     return (
         <div className={styles.background}>
-            <Header />
             <div className={styles.settlementContainer}>
                 <h2 className={styles.roomIdTitle}>ROOM ID: {roomId}</h2>
                 <hr className={styles.line} />
