@@ -29,7 +29,7 @@ app.use(cors({
 
 //サーバーがスリープ状態になるのを防ぐ
 app.get('/api/ping', (req, res) => {
-    res.status(200).send('pong');
+    res.status(200).send('Server is alive');
 });
 
 // app.use(
