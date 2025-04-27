@@ -1,4 +1,3 @@
-import Header from "../components/Header.js";
 import Spinner from "../components/Spinner.js";
 import styles from "../styles/style.module.css";
 import React, { useEffect, useState, useRef } from 'react';
@@ -35,6 +34,20 @@ export default function RoomPage() {
             }
         );
         socketRef.current = socket;
+
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                const navEntries = performance.getEntriesByType('navigation');
+                const navType = navEntries.length > 0 ? navEntries[0].type : null;
+                if (navType !== 'reload') {
+                    if (isHost && socketRef.current) {
+                        socketRef.current.emit('delete_room', { roomId });
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
 
         // サーバーに参加通知
         socket.emit('join_room', {
@@ -74,8 +87,10 @@ export default function RoomPage() {
         });
 
         return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
             socket.disconnect();
         };
+        
     }, [loading, isLoggedIn, user, roomId]);
 
     const sendMessage = () => {
@@ -126,7 +141,6 @@ export default function RoomPage() {
 
     return (
         <div className={styles.background}>
-            <Header />
             <div className={styles.settlementContainer}>
                 <h2 className={styles.roomIdTitle}>ROOM ID: {roomId}</h2>
                 <hr className={styles.line} />
