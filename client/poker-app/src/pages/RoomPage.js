@@ -35,6 +35,20 @@ export default function RoomPage() {
         );
         socketRef.current = socket;
 
+        const handleVisibilityChange = () => {
+            if (document.visibilityState === 'hidden') {
+                const navEntries = performance.getEntriesByType('navigation');
+                const navType = navEntries.length > 0 ? navEntries[0].type : null;
+                if (navType !== 'reload') {
+                    if (isHost && socketRef.current) {
+                        socketRef.current.emit('delete_room', { roomId });
+                    }
+                }
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+
         // サーバーに参加通知
         socket.emit('join_room', {
             roomId,
@@ -73,8 +87,10 @@ export default function RoomPage() {
         });
 
         return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
             socket.disconnect();
         };
+        
     }, [loading, isLoggedIn, user, roomId]);
 
     const sendMessage = () => {
