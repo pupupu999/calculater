@@ -28,10 +28,15 @@ export default function CreateRoom() {
             return;
         }
 
-        const newSocket = io("https://chipin-fdzx.onrender.com", {
-            transports: ["websocket"],
-            withCredentials: true
-        });
+        const newSocket = io(
+            window.location.hostname.includes('localhost')
+                ? 'http://localhost:3001'
+                : 'https://chipin-fdzx.onrender.com',
+            {
+                transports: ['websocket'],
+                withCredentials: true
+            }
+        );
 
         socketRef.current=newSocket;
 

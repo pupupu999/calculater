@@ -105,6 +105,10 @@ io.on('connection', (socket) => {
 
     socket.on('join_room', ({ roomId, username, uid, password, rebuy }, callback) => {
         const room = rooms[roomId];
+
+        if (rebuy < 0){
+            return callback?.({success: false, message: 'リバイは0以上の値を設定してください'});
+        }
     
         if (!room) {
             return callback?.({ success: false, message: '部屋が存在しません' });
@@ -147,6 +151,18 @@ io.on('connection', (socket) => {
     socket.on('create_room', ({ roomId, username, roomStack, roomMember, password, uid, rebuy }, callback) => {
         if (rooms[roomId]) {
             return callback?.({ success: false, message: '同じIDの部屋が既に存在します' });
+        }
+
+        if (roomStack<=0){
+            return callback?.({ success: false, message: 'スタックは1以上の値を設定してください'});
+        }
+
+        if (roomMember<2){
+            return callback?.({ success: false, message: '人数は2人以上に設定してください'});
+        }
+
+        if (rebuy<0){
+            return callback?.({ success: false, message: 'リバイは0以上の値を設定してください'});
         }
     
         rooms[roomId] = {
