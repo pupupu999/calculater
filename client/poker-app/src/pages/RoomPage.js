@@ -50,7 +50,7 @@ export default function RoomPage() {
             }
         };
 
-        document.addEventListener('visibilitychange', handleVisibilityChange);
+        document.addEventListener('unload', handleVisibilityChange);
 
         // サーバーに参加通知
         socket.emit('join_room', {
@@ -95,7 +95,7 @@ export default function RoomPage() {
                 console.log("ホストなので部屋を削除します");
                 socketRef.current.emit('delete_room', { roomId });
             }
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener('unload', handleVisibilityChange);
             socket.disconnect();
         };
         
@@ -131,7 +131,7 @@ export default function RoomPage() {
         }
 
         if (total !== 0) {
-            alert('Totalが0になっていません！');
+            alert('Totalが0になっていません!');
             return;
         }
 

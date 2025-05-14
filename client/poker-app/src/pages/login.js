@@ -21,7 +21,6 @@ export default function Login() {
         setLoading(true);
         try {
             const result = await signInWithPopup(auth, googleProvider);
-            console.log("Googleログイン成功:", result.user);
             await syncUserToServer(result.user);
             alert('Googleログイン成功');
             navigate('/Mypage');
