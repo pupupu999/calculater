@@ -67,6 +67,8 @@
    }
 }
 
+
+/*mypage.js*/
 .username {
    float:left;
    font-size: clamp(30px, 5vw, 40px);
@@ -203,6 +205,78 @@
    margin-top: 150px;
 }
 
+.modal {
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100vw;
+   height: 100vh;
+   background-color: rgba(0, 0, 0, 0.4);
+   display: flex;
+   justify-content: center;
+   align-items: center;
+   z-index: 2000;
+}
+
+.modalContent {
+   background-color: #ffffff;
+   border: 5px solid #121212;
+   border-radius: 20px;
+   padding: 40px 30px;
+   width: 90%;
+   max-width: 400px;
+   text-align: center;
+   font-family: 'Arial Black', monospace;
+   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+   position: relative;
+}
+
+.modalTitle {
+   font-size: 32px;
+   margin-bottom: 20px;
+   color: #121212;
+   font-weight: bold;
+}
+
+.modalInput {
+   width: 100%;
+   padding: 15px 20px;
+   font-size: 16px;
+   font-family: 'Arial Black', monospace;
+   background-color: #DDE6ED;
+   color: #121212;
+   border: 3px solid #121212;
+   border-radius: 12px;
+   margin-bottom: 20px;
+}
+
+.modalButton {
+   background-color: #e0e0e0;
+   border: 3px solid #121212;
+   border-radius: 12px;
+   font-size: 18px;
+   font-family: 'Arial Black', monospace;
+   font-weight: bold;
+   padding: 12px 24px;
+   cursor: pointer;
+   transition: background-color 0.3s;
+}
+
+.modalButton:hover {
+   background-color: #ccc;
+}
+
+.modalClose {
+   position: absolute;
+   top: 12px;
+   right: 18px;
+   font-size: 28px;
+   font-weight: bold;
+   color: #121212;
+   cursor: pointer;
+   line-height: 1;
+}
+
 /*Header.js*/
 .header {
    display: flex;
@@ -233,7 +307,7 @@
    z-index: 1001;
 }
 
- /* スマホ用（右スライド） */
+ /* スマホ用 */
 @media screen and (max-width: 706px) {
    .nav {
       position: fixed;
@@ -1084,6 +1158,29 @@ p {
    .miniCardMinus {
       font-size: 54px;
       margin: 0 auto;
+   }
+
+   .modalContent {
+      padding: 30px 20px;
+   }
+
+   .modalTitle {
+      font-size: 24px;
+   }
+
+   .modalButton {
+      font-size: 16px;
+      padding: 10px 20px;
+   }
+
+   .modalInput {
+      font-size: 14px;
+   }
+
+   .modalClose {
+      font-size: 24px;
+      top: 10px;
+      right: 15px;
    }
 
    /* battle record の下配置と横幅調整 */
