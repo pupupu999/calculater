@@ -29,6 +29,10 @@ const MyPage = () => {
     };
 
     const handleUsernameSubmit = async () => {
+        if (!newUsername.trim()) {
+            alert("ユーザーネームを入力してください。");
+            return;
+        }
         try {
             const userRef = doc(db, "users", user.uid); // UID を使ってドキュメント参照を取得
             await updateDoc(userRef, {
