@@ -27,12 +27,20 @@ const Ranking = () => {
     
     const userInfo = sortedUsers.find((sortedUser) => user.username === sortedUser.username);
 
-    const userWithRank = userInfo
-        ? {
-            ...userInfo,
-            rank: sortedUsers.findIndex(u => u.username === user.username) + 1
+    // 同率順位を考慮して順位を付ける
+    let currentRank = 1;
+    let previousChip = null;
+    let skip = 0;
+
+    const usersWithRank = sortedUsers.map((u, index) => {
+        if (u.total_chip !== previousChip) {
+            currentRank = index + 1;
         }
-        : null;
+        previousChip = u.total_chip;
+        return { ...u, rank: currentRank };
+    });
+
+    const userWithRank = usersWithRank.find((u) => u.username === user.username);
 
     if (!userWithRank) {
         return <Spinner />;
@@ -52,7 +60,7 @@ const Ranking = () => {
                 </div>
                 <div className={styles.rankingContainer}>
                     <RankingTable 
-                        users={sortedUsers}
+                        users={usersWithRank}
                         loading={rankLoading}
                         error={error}
                 />

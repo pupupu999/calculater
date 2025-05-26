@@ -7,11 +7,11 @@ const RankingTable=({users, loading, error})=>{
 
     return(
         <ul>
-            {users.map((user,index)=>(
+            {users.map((user)=>(
                 <RankingCard
                     key={user.username}
                     user={user}
-                    rank={index+1}
+                    rank={user.rank}
                 />
             ))}
         </ul>
