@@ -117,7 +117,7 @@ export default function CreateRoom() {
                     <input
                         className={styles.roomInputField}
                         type="number"
-                        placeholder="リバイ"
+                        placeholder="あなたのリバイ額"
                         value={rebuy}
                         onChange={(e) => setRebuy(e.target.value)}
                     />

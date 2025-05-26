@@ -65,7 +65,7 @@ return (
                         className={styles.loginInput}
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="パスワード"
+                        placeholder="6文字以上のパスワード"
                         type="password"
                     />
                     <button className={styles.emailLoginButton} onClick={handleRegister}>
