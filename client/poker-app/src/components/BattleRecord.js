@@ -53,11 +53,10 @@ const Record = () => {
                             setTableData(aggregatedData);
                         }
                     } else {
-                        console.log(docSnap.data());
-                        console.log("ユーザー情報が見つかりません!");
+                        alert("ユーザー情報が見つかりません!");
                     }
                 } catch (error) {
-                    console.error("ユーザー情報取得中にエラーが発生しました！", error);
+                    alert("ユーザー情報取得中にエラーが発生しました！", error);
                 }
             }
             fetchUserInfo();

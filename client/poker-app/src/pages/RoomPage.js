@@ -5,7 +5,7 @@ import { io } from 'socket.io-client';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useUser } from "../hooks/useUser.js";
 
-export default function RoomPage() {
+const RoomPage = () => {
     const { roomId } = useParams();
     const { user, isLoggedIn, loading } = useUser();
     const navigate = useNavigate();
@@ -84,15 +84,12 @@ export default function RoomPage() {
         });
 
         socket.on('room_deleted', () => {
-            console.log("room_deleted を受信しました！");
             alert('部屋が削除されました');
             navigate('/mypage');
         });
 
         return () => {
-            console.log("RoomPage unmount: クリーンアップ処理発動");
             if (isHostRef.current && socketRef.current) {
-                console.log("ホストなので部屋を削除します");
                 socketRef.current.emit('delete_room', { roomId });
             }
             document.removeEventListener('unload', handleVisibilityChange);
@@ -108,7 +105,6 @@ export default function RoomPage() {
             username: user.username,
             message
         });
-        console.log('メッセージ送信');
         setMessage('');
     };
 
@@ -192,3 +188,5 @@ export default function RoomPage() {
         </div>
     );
 }
+
+export default RoomPage;

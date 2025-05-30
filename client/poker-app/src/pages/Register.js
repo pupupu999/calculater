@@ -7,7 +7,7 @@ import styles from '../styles/style.module.css';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'react-feather';
 
-export default function Register() {
+const Register = () => {
 const [username, setUsername] = useState('');
 const [email, setEmail] = useState('');
 const [password, setPassword] = useState('');
@@ -77,3 +77,5 @@ return (
     </div>
 );
 }
+
+export default Register;

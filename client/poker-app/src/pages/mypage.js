@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from '../styles/style.module.css';
 import Header from "../components/Header.js";
 import Record from "../components/BattleRecord.js";
@@ -17,6 +17,10 @@ const MyPage = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newUsername, setNewUsername] = useState(user ? user.username : '');
+
+    useEffect(() => {
+        if(!isLoggedIn) handleNavigation('/login');
+    },[isLoggedIn]);
 
     const handleUsernameClick = () => {
         if (isLoggedIn) {
@@ -58,8 +62,6 @@ const MyPage = () => {
     if(loading){
         return <Spinner />;
     }
-
-    if(!user) return <p>ユーザー情報が取得できませんでした</p>
 
     return (
         <div className={styles.background}>

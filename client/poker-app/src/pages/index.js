@@ -6,7 +6,7 @@ import { auth } from "../firebase.js"; // firebaseファイルの正しいパス
 import Header from "../components/Header.js";
 
 // Homeコンポーネント
-export default function Home() {
+const Home = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
 
@@ -36,3 +36,5 @@ export default function Home() {
     </div>
   );
 }
+
+export default Home;

@@ -7,7 +7,7 @@ import { io } from 'socket.io-client';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from "../hooks/useUser.js";
 
-export default function CreateRoom() {
+const CreateRoom = () => {
     const [roomId, setRoomId] = useState('');
     const [password, setPassword] = useState('');
     const [roomStack, setRoomStack] = useState('');
@@ -127,4 +127,6 @@ export default function CreateRoom() {
         </div>
     );
 }
+
+export default CreateRoom;
 

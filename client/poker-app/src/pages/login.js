@@ -5,16 +5,17 @@ import { signInWithPopup, signInWithEmailAndPassword } from 'firebase/auth';
 import { auth, googleProvider } from '../firebase.js';
 import { syncUserToServer } from "../utils/syncUser.js";
 import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from 'react-feather';
 
-export default function Login() {
+const Login = () =>  {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    const navigate=useNavigate();
+    const navigate = useNavigate();
 
-    const handleNavigationToRegister=() => {
-        navigate('/Register');
+    const handleNavigation=(path) => {
+        navigate(path);
     }
 
     const handleGoogleLogin = async () => {
@@ -53,6 +54,10 @@ export default function Login() {
     return (
         <div className={styles.loginContainer}>
             <div className={styles.loginBox}>
+                <button className={styles.backButton} onClick={() => handleNavigation('/')}>
+                    <ArrowLeft size={18} style={{ marginRight: '8px' }} />
+                    戻る
+                </button>
                 <h2 className={styles.loginTitle}>Login</h2>
                 <div className={styles.loginContent}>
                     <div className={styles.loginLeft}>
@@ -76,7 +81,7 @@ export default function Login() {
                     </div>
                     <div className={styles.loginRight}>
                     <div className={styles.forgotPassword}>または</div>
-                        <button className={styles.socialLoginButton} onClick={handleNavigationToRegister}>メールアドレスで新規登録</button>
+                        <button className={styles.socialLoginButton} onClick={() => handleNavigation('/Register')}>メールアドレスで新規登録</button>
                         <button className={styles.socialLoginButton} onClick={handleGoogleLogin}>
                             Googleでサインイン
                         </button>
@@ -86,3 +91,5 @@ export default function Login() {
         </div>
     );
 }
+
+export default Login;
