@@ -32,30 +32,6 @@ app.get('/api/ping', (req, res) => {
     res.status(200).send('Server is alive');
 });
 
-// app.use(
-//     helmet({
-//         crossOriginOpenerPolicy: { policy: 'same-origin-allow-popups' },
-//         contentSecurityPolicy: {
-//             directives: {
-//                 defaultSrc: ["'self'"],
-//                 imgSrc: ["'self'", "data:", "https://www.google.com"],
-//                 scriptSrc: ["'self'", "https://apis.google.com"],
-//                 connectSrc: [
-//                     "'self'", 
-//                     "https://apis.google.com",
-//                     "https://identitytoolkit.googleapis.com",
-//                     "https://firestore.googleapis.com",
-//                 ],
-//                 frameSrc: [
-//                     "https://accounts.google.com",
-//                     "https://my-project-30c6b.firebaseapp.com",
-//                 ],
-//                 styleSrc: ["'self'", "'unsafe-inline'"],
-//             },
-//         },
-//     })
-// );
-
 app.use(
     helmet({
         crossOriginOpenerPolicy: false,
@@ -191,6 +167,7 @@ io.on('connection', (socket) => {
             console.log(`Room ${roomId} deleted`);
         }
     });
+
     //自身の残りスタックを送信する
     socket.on('message', ({ roomId, username, message }) => {
         console.log("ユーザーメッセージ：",message);
@@ -204,6 +181,7 @@ io.on('connection', (socket) => {
         });
         io.to(roomId).emit('receive_message', { username, message, total: rooms[roomId].total });
     });
+
     //部屋の退室を実行する
     socket.on('leave_room', ({ roomId, username }) => {
         if (rooms[roomId]) {
@@ -217,7 +195,8 @@ io.on('connection', (socket) => {
             socket.leave(roomId);
         }
     });
-
+    
+    //データを保存する
     socket.on('save_score', async ({ users }) => {
         console.log("save_score 受信:", users);
         console.log("db type:", typeof db);
@@ -225,6 +204,8 @@ io.on('connection', (socket) => {
         try {
             const newMember = users.map(user => user.username);
             users.forEach(async (user) => {
+                //newMemberから自分を排除する
+                const newMemberRmMe = newMember.filter(name => name !== user.username);
                 const currentDate = admin.firestore.Timestamp.now();
                 const docRef = db.collection('users').doc(user.uid);
                 const docSnap = await docRef.get();
@@ -240,7 +221,7 @@ io.on('connection', (socket) => {
                     const newWins = Number(user.message) < 0 ? prevWins : prevWins + 1;
                     const newLosses = Number(user.message) < 0 ? prevLosses + 1 : prevLosses;
                     const prevFriends = docSnap.data().friends;
-                    const newFriends = Array.from(new Set([...prevFriends, ...newMember]));
+                    const newFriends = Array.from(new Set([...prevFriends, ...newMemberRmMe]));
     
                     await docRef.set({
                         results: {
