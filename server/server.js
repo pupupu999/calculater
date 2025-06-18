@@ -203,6 +203,8 @@ io.on('connection', (socket) => {
         console.log("db instanceof Firestore:", db instanceof admin.firestore.Firestore);
         try {
             const newMember = users.map(user => user.username);
+            //フレンドにuidを持たせるなら以下
+            //const newMember = users.map(user => ({ username: user.username, uid: user.uid }));
             users.forEach(async (user) => {
                 //newMemberから自分を排除する
                 const newMemberRmMe = newMember.filter(name => name !== user.username);
