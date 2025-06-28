@@ -19,6 +19,11 @@ const getRankImage = (rank)=>{
 };
 
 const RankingCard=({user,rank})=>{
+    // 最新の月を取得
+    const latestMonth = user.month_total_chip
+        ? Object.keys(user.month_total_chip).sort().pop()
+        : null;
+
     return(
         <div className={styles.cardSet}>
             <div className={styles.rank}>{rank}{getRankOrdinal(rank)}</div>
@@ -27,7 +32,9 @@ const RankingCard=({user,rank})=>{
                     <img src={getRankImage(rank)} alt="king" className={styles.rankingKurupin}/>
                     <span className={styles.rankingUsername}>{user.username}</span>
                 </div>
-                <div className={styles.rankingMiniCard}>{user.month_total_chip}</div>
+                <div className={styles.rankingMiniCard}>
+                    {latestMonth ? user.month_total_chip[latestMonth] : 0}
+                </div>
             </div>
         </div>
     )
