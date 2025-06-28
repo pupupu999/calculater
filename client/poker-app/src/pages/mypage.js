@@ -73,7 +73,7 @@ const MyPage = () => {
             <div className={styles.main}>
                 <div className={styles.title}>
                     <div className={styles.kurupin}>
-                        <Card currentChip={(!isLoggedIn||(!user.data||user.data.length==0)) ? 0 : user.data[user.data.length-1].total_chip}/>
+                        <Card currentChip={(!isLoggedIn||(!user.data||user.data.length==0)) ? 0 : user.currentMonthTotalChip}/>
                     </div>
                     <div className={styles.button_row}>
                         <div className={styles.image_container_topcenter}>

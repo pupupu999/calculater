@@ -22,7 +22,8 @@ const app = express();
 app.use(cors({
     origin:[
         "https://my-project-30c6b.web.app",
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "http://192.168.0.50:3000"
     ],
     credentials: true
 }));
@@ -64,7 +65,8 @@ const io = new Server(server, {
     cors: {
         origin: [
             "https://my-project-30c6b.web.app",
-            "http://localhost:3000"
+            "http://localhost:3000",
+            "http://192.168.0.50:3000"
         ], 
         methods: ["GET", "POST"],
         credentials: true
@@ -199,8 +201,6 @@ io.on('connection', (socket) => {
     //データを保存する
     socket.on('save_score', async ({ users }) => {
         console.log("save_score 受信:", users);
-        console.log("db type:", typeof db);
-        console.log("db instanceof Firestore:", db instanceof admin.firestore.Firestore);
         try {
             const newMember = users.map(user => user.username);
             //フレンドにuidを持たせるなら以下
@@ -209,38 +209,61 @@ io.on('connection', (socket) => {
                 //newMemberから自分を排除する
                 const newMemberRmMe = newMember.filter(name => name !== user.username);
                 const currentDate = admin.firestore.Timestamp.now();
+                const now = new Date();
+                const yearMonth = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
                 const docRef = db.collection('users').doc(user.uid);
                 const docSnap = await docRef.get();
     
                 if (docSnap.exists && docSnap.data().results) {
+                    //累計rebuy計算
+                    // const monthlySummary = docSnap.data().monthly_summary || {};
+                    // const prevRebuy = monthlySummary[yearMonth]?.rebuy ?? 0;
+                    // const newRebuy = prevRebuy + Number(user.rebuy);
                     const prevData = docSnap.data().results.day_value;
-                    const newTotal = prevData[prevData.length - 1].total_chip + Number(user.message);
-                    const newData = [...prevData, { date: currentDate, chip: user.message, total_chip: newTotal, member: newMember }];
+                    //total_chipをマップで保存するように修正するので以下を変更する必要があるtotal_chip→total_chip[total_chip.length-1]
+                    //mypageで引用されるtotal_chipの部分も修正が必要やからチェックして
+                    const newTotal = Object.values(prevData[prevData.length - 1].total_chip)[0] + Number(user.message);
+                    const totalChipMap = { [yearMonth]: newTotal };
+                    const newCurrentMonthTotal = docSnap.data().results.current_month_total_chip + Number(user.message);
+                    //newDataにリバイの回数を追加するようにする
+                    //total_chipもrebuyもマップで保存してキーに月、値にその月のtotal額を入れる
+                    const newData = [...prevData, { date: currentDate, chip: user.message, rebuy: Number(user.rebuy), total_chip: totalChipMap, member: newMember }];
                     const prevScore = docSnap.data().results.count.games;
                     const prevWins = docSnap.data().results.count.wins;
                     const prevLosses = docSnap.data().results.count.losses;
                     const newScore = prevScore + 1;
                     const newWins = Number(user.message) < 0 ? prevWins : prevWins + 1;
                     const newLosses = Number(user.message) < 0 ? prevLosses + 1 : prevLosses;
-                    const prevFriends = docSnap.data().friends;
+                    const prevFriends = docSnap.data().friends || [];
                     const newFriends = Array.from(new Set([...prevFriends, ...newMemberRmMe]));
     
+                    // 既存の該当月データを取得
+                    // const prevMonthData = monthlySummary[yearMonth] || {};
+                    
+                    // const updatedMonthData = { ...prevMonthData, rebuy: newRebuy };
+                    
                     await docRef.set({
                         results: {
+                            current_month_total_chip: newCurrentMonthTotal,
                             day_value: newData,
                             count: { games: newScore, wins: newWins, losses: newLosses }
                         },
                         friends: newFriends
+                        // monthly_summary: { [yearMonth]: updatedMonthData }
                     }, { merge: true });
                 } else if (docSnap.exists) {
                     const newTotal = Number(user.message);
-                    const newData = [{ date: currentDate, chip: user.message, total_chip: newTotal, member: newMember }];
+                    const totalChipMap = { [yearMonth]: newTotal };
+                    //newDataにリバイ額を追加するようにする
+                    //total_chipもrebuyもマップで保存してキーに月、値にその月のtotal額を入れる
+                    const newData = [{ date: currentDate, chip: user.message, rebuy: Number(user.rebuy), total_chip: totalChipMap, member: newMember }];
                     const newScore = 1;
                     const newWins = Number(user.message) < 0 ? 0 : 1;
                     const newLosses = Number(user.message) < 0 ? 1 : 0;
     
                     await docRef.set({
                         results: {
+                            current_month_total_chip: newTotal,
                             day_value: newData,
                             count: { games: newScore, wins: newWins, losses: newLosses }
                         },
