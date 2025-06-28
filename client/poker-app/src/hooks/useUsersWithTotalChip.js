@@ -13,13 +13,13 @@ export const useUsers = () => {
                 const usersSnap = await getDocs(collection(db, 'users'));
                 const usersData = usersSnap.docs.map(doc => {
                     const data = doc.data();
-                    const lastTotalChip = data.results?.day_value?.at(-1)?.total_chip ?? 0;
+                    const monthlyTotalChip = data.results?.current_month_total_chip ?? 0;
 
                     return {
                         uid: data.uid || doc.id,
                         username: data.displayName || data.userid || "名無し",
                         email: data.email || "",
-                        total_chip: lastTotalChip
+                        month_total_chip: monthlyTotalChip
                     };
                 });
                 setUsers(usersData);

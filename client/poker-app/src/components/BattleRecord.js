@@ -33,16 +33,23 @@ const Record = () => {
                         const results=data.results;
                         if(results?.count){
                             setScoreData(results.count);
-                            const formattedData = results.day_value.map((item) => ({
-                                // タイムスタンプを日付に変換
-                                ...item,
-                                date: new Date(item.date.seconds * 1000).toLocaleDateString() // 'seconds'を使用して変換
-                            }));
+                            const formattedData = results.day_value.map((item) => {
+                                const dateObj = new Date(item.date.seconds * 1000);
+                                const dateString = dateObj.toLocaleDateString();
+                                // total_chipを数値に変換
+                                const totalChipValue = item.total_chip ? Object.values(item.total_chip)[0] : 0;
+                                return {
+                                    ...item,
+                                    total_chip: totalChipValue,
+                                    date: dateString
+                                };
+                            });
                             setData(formattedData);
                             const groupedData = {};
                             // データを日付ごとにグループ化
                             formattedData.forEach((item) => {
-                                const {date, chip, total_chip } = item;
+                                const { date, chip, total_chip } = item;
+
                                 if (!groupedData[date]) {
                                     groupedData[date] = { date, chip: 0, total_chip: 0 };
                                 }

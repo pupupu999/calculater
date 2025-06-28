@@ -9,7 +9,7 @@ const RankingTable=({users, loading, error})=>{
         <ul>
             {users.map((user)=>(
                 <RankingCard
-                    key={user.username}
+                    key={user.uid}
                     user={user}
                     rank={user.rank}
                 />

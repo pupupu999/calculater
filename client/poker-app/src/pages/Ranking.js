@@ -23,20 +23,19 @@ const Ranking = () => {
         return <Spinner />;
     }
 
-    const sortedUsers = [...users].sort((a, b) => b.total_chip - a.total_chip);
+    const sortedUsers = [...users].sort((a, b) => b.month_total_chip - a.month_total_chip);
     
     const userInfo = sortedUsers.find((sortedUser) => user.username === sortedUser.username);
 
     // 同率順位を考慮して順位を付ける
     let currentRank = 1;
     let previousChip = null;
-    let skip = 0;
 
     const usersWithRank = sortedUsers.map((u, index) => {
-        if (u.total_chip !== previousChip) {
+        if (u.month_total_chip !== previousChip) {
             currentRank = index + 1;
         }
-        previousChip = u.total_chip;
+        previousChip = u.month_total_chip;
         return { ...u, rank: currentRank };
     });
 

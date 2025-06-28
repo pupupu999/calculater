@@ -27,7 +27,7 @@ const RankingCard=({user,rank})=>{
                     <img src={getRankImage(rank)} alt="king" className={styles.rankingKurupin}/>
                     <span className={styles.rankingUsername}>{user.username}</span>
                 </div>
-                <div className={styles.rankingMiniCard}>{user.total_chip}</div>
+                <div className={styles.rankingMiniCard}>{user.month_total_chip}</div>
             </div>
         </div>
     )

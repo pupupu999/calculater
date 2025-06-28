@@ -23,14 +23,16 @@ export const useUser = () => {
                         const data=docSnap.data();
                         const results=data.results;
                         setUser({
-                            username:data.displayName || '',
-                            scoreData:results?.count || {},
-                            data:results?.day_value?.map((item)=>({
+                            username: data.displayName || '',
+                            scoreData: results?.count || {},
+                            data: results?.day_value?.map((item) => ({
                                 ...item,
                                 date: new Date(item.date.seconds * 1000).toLocaleDateString(),
-                            }))||[],
-                            email:data.email,
-                            uid:data.uid
+                                total_chip: item.total_chip ? Object.values(item.total_chip)[0] : 0
+                            })) || [],
+                            email: data.email,
+                            uid: data.uid,
+                            currentMonthTotalChip: results?.current_month_total_chip ?? 0
                         });
                     } 
                 } catch (error) {
