@@ -28,23 +28,25 @@ const JoinRoom = () => {
         }
 
         //テスト環境
-        const newSocket = io(
-            'http://192.168.0.50:3001',
-            {
-                transports: ['websocket'],
-                withCredentials: true,
-            }
-        );
-        //↓本番環境
         // const newSocket = io(
-        //     window.location.hostname.includes('localhost')
-        //         ? 'http://localhost:3001'
-        //         : 'https://chipin-fdzx.onrender.com',
+        //     'http://192.168.0.50:3001',
         //     {
         //         transports: ['websocket'],
         //         withCredentials: true,
         //     }
         // );
+
+        //↓本番環境
+        const newSocket = io(
+            window.location.hostname.includes('localhost')
+                ? 'http://localhost:3001'
+                : 'https://chipin-fdzx.onrender.com',
+            {
+                transports: ['websocket'],
+                withCredentials: true,
+            }
+        );
+        
         socketRef.current = newSocket;
 
         return () => {
