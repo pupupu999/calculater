@@ -26,24 +26,25 @@ const RoomPage = () => {
         }
         
         //テスト環境
+        // const socket = io(
+        //     'http://192.168.0.50:3001',
+        //     {
+        //         transports: ['websocket'],
+        //         withCredentials: true,
+        //     }
+        // );
+
+        //↓本番環境
         const socket = io(
-            'http://192.168.0.50:3001',
+            window.location.hostname.includes('localhost')
+                ? 'http://localhost:3001'
+                : 'https://chipin-fdzx.onrender.com',
             {
                 transports: ['websocket'],
                 withCredentials: true,
             }
         );
 
-        //↓本番環境
-        // const socket = io(
-        //     window.location.hostname.includes('localhost')
-        //         ? 'http://localhost:3001'
-        //         : 'https://chipin-fdzx.onrender.com',
-        //     {
-        //         transports: ['websocket'],
-        //         withCredentials: true,
-        //     }
-        // );
         socketRef.current = socket;
 
         isHostRef.current = isHost;
