@@ -22,6 +22,8 @@ const Record = () => {
     const [scoreData, setScoreData] = useState([]);
     const [tableData, setTableData] = useState([]);
 
+    console.log("Record debugUser:", debugUser);
+
     useEffect(() => {
         if (!isLoggedIn || !user || loading) return;
             const fetchUserInfo = async () => {
