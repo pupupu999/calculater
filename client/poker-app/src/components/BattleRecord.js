@@ -22,8 +22,6 @@ const Record = () => {
     const [scoreData, setScoreData] = useState([]);
     const [tableData, setTableData] = useState([]);
 
-    console.log("Record debugUser:", debugUser);
-
     useEffect(() => {
         if (!isLoggedIn || !user || loading) return;
             const fetchUserInfo = async () => {
@@ -51,12 +49,12 @@ const Record = () => {
                             // データを日付ごとにグループ化
                             formattedData.forEach((item) => {
                                 const { date, chip, total_chip } = item;
-
+                                const totalChip = total_chip ?? 0;
                                 if (!groupedData[date]) {
                                     groupedData[date] = { date, chip: 0, total_chip: 0 };
                                 }
                                 groupedData[date].chip += Number(chip);
-                                groupedData[date].total_chip = totalChipValue;
+                                groupedData[date].total_chip = totalChip;
                             });
                             const aggregatedData = Object.values(groupedData);
                             setTableData(aggregatedData);

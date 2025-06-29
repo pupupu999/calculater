@@ -63,12 +63,6 @@ const MyPage = () => {
         return <Spinner />;
     }
 
-    console.log("== MyPage Debug Info ==");
-    console.log("user:", user);
-    console.log("user?.username:", user?.username);
-    console.log("user?.currentMonthTotalChip:", user?.currentMonthTotalChip);
-    console.log("user?.data:", user?.data);
-
     return (
         <div className={styles.background}>
             <Header />
@@ -91,7 +85,7 @@ const MyPage = () => {
                     </div>
                 </div>
                 <div className = {styles.record}>
-                    <Record login = {isLoggedIn} debugUser={user}/>
+                    <Record login = {isLoggedIn} />
                 </div>
             </div>
             {isModalOpen && (

@@ -11,7 +11,7 @@ const sampleData=[
     {date:"2025-01-05",chip:200,total_chip:500}
 ];
 
-const columns=[
+const columns = [
     {
         title: "日付",
         dataIndex: "date",
@@ -26,6 +26,13 @@ const columns=[
     {
         title: "通算チップ",
         dataIndex: "total_chip",
+        render: (value) => {
+            if (typeof value === "object" && value !== null) {
+                const latestMonth = Object.keys(value).sort().pop();
+                return value[latestMonth];
+            }
+            return value;
+        }
     }
 ];
 
