@@ -37,7 +37,7 @@
     "react-router-dom": "^6.26.2",
     "react-scripts": "^5.0.1",
     "recharts": "^2.13.3",
-    "semver": "^7.7.1",
+    "semver": "^7.7.2",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
     "styled-components": "^6.1.13"
@@ -49,4 +49,3 @@
     "npm-force-resolutions": "^0.0.10"
   }
 }
-
