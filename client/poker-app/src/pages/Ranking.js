@@ -20,6 +20,7 @@ const Ranking = () => {
     }, [loading, isLoggedIn, navigate]);
 
     if (loading || rankLoading) {
+        console.log('Loading or rankLoading is true', { loading, rankLoading });
         return <Spinner />;
     }
 
@@ -39,7 +40,11 @@ const Ranking = () => {
         return { ...u, rank: currentRank };
     });
 
-    const userWithRank = usersWithRank.find((u) => u.username === user.username);
+    console.log('usersWithRank', usersWithRank);
+
+    const userWithRank = usersWithRank.find((u) => u.uid === user.uid);
+
+    console.log('userWithRank', userWithRank);
 
     if (!userWithRank) {
         return <Spinner />;

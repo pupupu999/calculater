@@ -34,7 +34,11 @@ export const useUser = () => {
                             uid: data.uid,
                             currentMonthTotalChip: results?.current_month_total_chip ?? 0
                         });
-                    } 
+                    }
+                    // console.log(`user.data.total_chip:${user.data[0].total_chip}`);
+                    // console.log(`typeof user.data.total_chip:${typeof user.data[0].total_chip}`);
+                    // console.log(`currentMonthTotalChip:${user.currentMonthTotalChip}`);
+                    // console.log(`typeofcurrentMonthTotalChip:${typeof user.currentMonthTotalChip}`);
                 } catch (error) {
                     console.error("ユーザー情報取得中にエラーが発生しました！", error);
                 } finally {

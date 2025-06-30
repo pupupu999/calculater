@@ -11,7 +11,12 @@ const sampleData=[
 ];
 
 const MyLineChart = ({data}) => {
-    const displayData = (!data || data.length === 0) ? sampleData : data;
+    const displayData = (!data || data.length === 0) 
+    ? sampleData 
+    : data.map(({ date, total_chip }) => ({
+        date,
+        total_chip
+    }));
 
     // データから最小値と最大値を計算
     const minValue = Math.min(...displayData.map((d) => d["total_chip"]));
@@ -32,6 +37,7 @@ const MyLineChart = ({data}) => {
         ticks.push(i);
     }
 
+    console.log("★★ data", data);
 
     return (
         <div className = {styles.chart}>
