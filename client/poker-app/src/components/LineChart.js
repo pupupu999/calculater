@@ -37,8 +37,6 @@ const MyLineChart = ({data}) => {
         ticks.push(i);
     }
 
-    console.log("★★ data", data);
-
     return (
         <div className = {styles.chart}>
             {displayData.length > 0 ? (

@@ -14,8 +14,6 @@ export const useUsers = () => {
                 const usersData = usersSnap.docs.map(doc => {
                     const data = doc.data();
                     const monthlyTotalChip = data.results?.current_month_total_chip ?? 0;
-                    console.log(`monthlyTotalChip:${monthlyTotalChip}`);
-                    console.log(`typeof monthlyTotalChip:${typeof monthlyTotalChip }`)
                     return {
                         uid: data.uid || doc.id,
                         username: data.displayName || data.userid || "名無し",

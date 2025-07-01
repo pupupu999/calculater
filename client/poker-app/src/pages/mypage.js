@@ -63,7 +63,6 @@ const MyPage = () => {
         return <Spinner />;
     }
 
-    console.log(`mypage user.currentMonthTotalChip:${user.currentMonthTotalChip}`)
     return (
         <div className={styles.background}>
             <Header />
