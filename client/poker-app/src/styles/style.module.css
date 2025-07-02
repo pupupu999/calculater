@@ -307,6 +307,15 @@
    z-index: 1001;
 }
 
+.pageName {
+   font-weight: bold;
+   font-family: 'Arial Black';
+}
+
+.pageName.active {
+   display: none;
+}
+
  /* スマホ用 */
 @media screen and (max-width: 706px) {
    .nav {
@@ -346,6 +355,10 @@
       text-decoration: none;
       font-size: 18px;
       font-family: 'Arial Black', monospace;
+   }
+
+   .pageName {
+      font-size: 18px;
    }
 }
 
@@ -393,6 +406,10 @@
 
    .nav li:hover {
       border-bottom: 2px solid white;
+   }
+
+   .pageName {
+      font-size: 24px;
    }
 }
 
@@ -892,6 +909,31 @@ p {
 .userRankContainer {
    width: 50vw;
 }
+
+.selectContainer {
+   
+}
+
+.selectBox {
+   font-family: 'Arial Black', monospace;
+}
+
+@media screen and (min-width: 707px) {
+   .selectBox {
+      margin:0 auto;
+      margin-top: 5%;
+      width: 60vw;
+   }
+}
+
+@media screen and (max-width: 706px) {
+   .selectBox {
+      margin:0 auto;
+      margin-top: 10%;
+      width: 60vw;
+   }
+}
+
 
 /*login.js*/
 .loginContainer {

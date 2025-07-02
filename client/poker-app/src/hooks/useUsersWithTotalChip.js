@@ -13,12 +13,14 @@ export const useUsers = () => {
                 const usersSnap = await getDocs(collection(db, 'users'));
                 const usersData = usersSnap.docs.map(doc => {
                     const data = doc.data();
-                    const monthlyTotalChip = data.results?.current_month_total_chip ?? 0;
+                    const currentTotalChip = data.results?.current_month_total_chip ?? 0;
+                    const monthTotalChip = data.results?.monthly_summary ?? {};
                     return {
                         uid: data.uid || doc.id,
                         username: data.displayName || data.userid || "名無し",
                         email: data.email || "",
-                        month_total_chip: monthlyTotalChip
+                        current_total_chip: currentTotalChip,
+                        monthly_total_chip: monthTotalChip
                     };
                 });
                 setUsers(usersData);

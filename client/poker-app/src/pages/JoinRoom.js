@@ -11,6 +11,7 @@ const JoinRoom = () => {
     const [roomId, setRoomId] = useState('');
     const [password, setPassword] = useState('');
     const [rebuy, setRebuy] = useState('');
+    const pageName = "Join Room";
 
     const navigate = useNavigate();
 
@@ -81,7 +82,9 @@ const JoinRoom = () => {
 
     return(
         <div className={styles.background}>
-            <Header />
+            <Header 
+                pageName={pageName}
+            />
             <div className={styles.body}>
                 <div className={styles.roomFormContainer}>
                     <div className={styles.roomInputBox}>

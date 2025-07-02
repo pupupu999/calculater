@@ -14,6 +14,7 @@ const CreateRoom = () => {
     const [roomMember, setRoomMember] = useState('');
     const [rebuy, setRebuy] = useState('');
     const navigate = useNavigate();
+    const pageName = "Create Room";
 
     const { user, isLoggedIn, loading } = useUser();
 
@@ -87,7 +88,9 @@ const CreateRoom = () => {
 
     return (
         <div className={styles.background}>
-            <Header />
+            <Header 
+                pageName={pageName}
+            />
             <div className={styles.roomFormContainer}>
                 <div className={styles.roomInputBox}>
                     <button className={styles.backButton} onClick={() => navigate('/mypage')}>
