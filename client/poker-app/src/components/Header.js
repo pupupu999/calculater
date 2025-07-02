@@ -3,7 +3,7 @@ import { FaBars, FaTimes } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom'; 
 import { auth } from '../firebase.js'
 import styles from '../styles/style.module.css'; 
-const Header = () => {
+const Header = ({ pageName }) => {
     const [menuOpen, setMenuOpen] = useState(false);
     const navigate = useNavigate();
 
@@ -33,6 +33,9 @@ const Header = () => {
         <header className={styles.header}>
             <div className={styles.logo}>
                     <img src='/img/kurupin.png' alt='logo' className={styles.logo} onClick={() => navigation()}/>
+            </div>
+            <div className={`${styles.pageName} ${menuOpen ? styles.active : ''}`}>
+                {pageName}
             </div>
             <nav className={`${styles.nav} ${menuOpen ? styles.active : ''}`}>
                 <ul>

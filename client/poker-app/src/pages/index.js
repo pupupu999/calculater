@@ -9,6 +9,7 @@ import Header from "../components/Header.js";
 const Home = () => {
   const [user, setUser] = useState(null);
   const navigate = useNavigate();
+  const pageName = "";
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -27,7 +28,9 @@ const Home = () => {
 
   return (
     <div className={styles.titleBackground}>
-      <Header />
+      <Header 
+        pageName={pageName}
+      />
       <div className={styles.titleContent}>
         <button className={styles.titleButton} onClick={() => handleNavigation("/login")}>
           Start

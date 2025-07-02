@@ -18,6 +18,8 @@ const MyPage = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [newUsername, setNewUsername] = useState(user ? user.username : '');
 
+    const pageName = "Home";
+
     useEffect(() => {
         if(!isLoggedIn) handleNavigation('/login');
     },[isLoggedIn]);
@@ -65,7 +67,9 @@ const MyPage = () => {
 
     return (
         <div className={styles.background}>
-            <Header />
+            <Header
+                pageName={pageName}
+            />
             <span className={styles.username} onClick={handleUsernameClick} style={{ cursor: 'pointer' }}>
                 {isLoggedIn ? user.username : "Guest"}
             </span>
