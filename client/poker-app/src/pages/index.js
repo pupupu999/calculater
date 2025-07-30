@@ -22,6 +22,14 @@ const Home = () => {
     return () => unsubscribe();
   }, []);
 
+  useEffect(() => {
+    // サーバーを起動するための事前リクエスト
+    fetch('/api/ping')
+      .then(res => res.text())
+      .then(console.log)
+      .catch(console.error);
+  }, []);
+
   const handleNavigation = (path) => {
     navigate(path);
   };
