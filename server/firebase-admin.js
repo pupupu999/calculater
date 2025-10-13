@@ -1,5 +1,14 @@
 import admin from 'firebase-admin';
 import 'dotenv/config';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+// プロジェクトルートの.envファイルを読み込む
+import { config } from 'dotenv';
+config({ path: join(__dirname, '..', '.env') });
 
 const serviceAccount = {
     type: process.env.FIREBASE_TYPE,
