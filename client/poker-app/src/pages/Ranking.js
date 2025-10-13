@@ -28,7 +28,9 @@ const Ranking = () => {
         if (users && users.length > 0) {
             const options = Array.from(new Set(
                 users.flatMap(user => Object.keys(user.monthly_total_chip))
-            )).map(m => ({ value: m, label: m }));
+            ))
+                .sort((a, b) => b.localeCompare(a))
+                .map(m => ({ value: m, label: m }));
 
             setMonthOptions(options);
             if (!selectedMonth && options.length > 0) {
