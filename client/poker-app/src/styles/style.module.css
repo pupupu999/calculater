@@ -545,9 +545,10 @@ p {
    flex-direction: column;
    gap: 10px;
    margin-top: 20px;
+   height: 200px;
    max-height: 200px; /* 表示エリアの高さを固定 */
    overflow-y: auto; /* 縦方向にスクロール可能に設定 */
-   padding-right: 10px; /* スクロールバーが表示された場合の余白調整 */
+   padding: 0 3px; /* スクロールバーが表示された場合の余白調整 */
    border: 1px solid #ddd; /* 枠線を追加 */
    border-radius: 5px; /* 枠線を角丸にする */
    background-color: #f9f9f9; /* 背景色 */
@@ -716,6 +717,15 @@ p {
    font-weight: bold;
    padding: 20px 40px;
    border: none;
+   border-radius: 10px;
+}
+
+.proxyButton {
+   background-color: #ffffff;
+   color: #121212;
+   font-weight: bold;
+   padding: 20px 40px;
+   border: 5px solid #121212;
    border-radius: 10px;
 }
 
@@ -1154,6 +1164,13 @@ p {
    line-height: 1.2;
 }
 
+/*FriendList.js*/
+.friendItem {
+   font-size: 16px;
+   font-family: 'Arial Black', monospace;
+   text-align: center;
+   margin: 8px auto;
+}
 /*ボタンサイズスマホ対応*/
 @media screen and (max-width: 706px) {
    /* 縦並び全体レイアウト */
@@ -1366,6 +1383,13 @@ p {
    }
 
    .deleteButton {
+      flex: 1;
+      font-size: 16px;
+      padding: 12px;
+      max-width: 50vw;
+   }
+
+   .proxyButton {
       flex: 1;
       font-size: 16px;
       padding: 12px;

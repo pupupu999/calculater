@@ -29,25 +29,26 @@ const CreateRoom = () => {
             return;
         }
 
-        //テスト環境
-        // const newSocket = io(
-        //     'http://192.168.0.50:3001',
-        //     {
-        //         transports: ['websocket'],
-        //         withCredentials: true,
-        //     }
-        // );
-
-        //↓本番環境
-        const newSocket = io(
-            window.location.hostname.includes('localhost')
-                ? 'http://localhost:3001'
-                : 'https://chipin-fdzx.onrender.com',
-            {
-                transports: ['websocket'],
-                withCredentials: true
+        // Socket.IO接続URLの決定
+        const getSocketURL = () => {
+            const hostname = window.location.hostname;
+            
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                return 'http://localhost:3001';
             }
-        );
+            
+            // ローカルネットワークIPアドレスの場合
+            if (/^(192\.168\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.)/.test(hostname)) {
+                return `http://${hostname}:3001`;
+            }
+            
+            return 'https://chipin-fdzx.onrender.com';
+        };
+
+        const newSocket = io(getSocketURL(), {
+            transports: ['websocket'],
+            withCredentials: true
+        });
 
         socketRef.current=newSocket;
 
@@ -62,26 +63,32 @@ const CreateRoom = () => {
             return;
         }
     
-        if (socketRef.current) {
-            socketRef.current.emit('create_room', {
-                roomId,
-                username: user.username,
-                roomStack,
-                roomMember,
-                password,
-                uid: user.uid,
-                rebuy: Number(rebuy) || 0
-            }, (response) => {
-                if (response.success) {
-                    alert('部屋が作成できました');
-                    navigate(`/room/${roomId}`);
-                } else {
-                    alert(response.message || '部屋の作成に失敗しました');
-                }
-            });
-        } else {
-            console.error('Socket is not initialized.');
+        if (!user) {
+            alert('ユーザー情報が読み込まれていません。しばらく待ってから再度お試しください。');
+            return;
         }
+    
+        if (!socketRef.current) {
+            alert('接続が確立されていません。しばらく待ってから再度お試しください。');
+            return;
+        }
+    
+        socketRef.current.emit('create_room', {
+            roomId,
+            username: user.username,
+            roomStack,
+            roomMember,
+            password,
+            uid: user.uid,
+            rebuy: Number(rebuy) || 0
+        }, (response) => {
+            if (response.success) {
+                alert('部屋が作成できました');
+                navigate(`/room/${roomId}`);
+            } else {
+                alert(response.message || '部屋の作成に失敗しました');
+            }
+        });
     };
 
     if(loading) return <Spinner />;
