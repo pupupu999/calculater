@@ -20,11 +20,23 @@ const app = express();
 
 // 本番環境では変更する！（サーバーへのフロントのアクセス制限）
 app.use(cors({
-    origin:[
-        "https://my-project-30c6b.web.app",
-        "http://localhost:3000",
-        "http://192.168.0.50:3000"
-    ],
+    origin: (origin, callback) => {
+        if (!origin) return callback(null, true);
+        
+        const allowedOrigins = [
+            "https://my-project-30c6b.web.app",
+            "http://localhost:3000"
+        ];
+        
+        // ローカルネットワークIPアドレスを許可（192.168.x.x、10.x.x.x、172.16-31.x.x）
+        const localNetworkPattern = /^http:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[01])\.\d+\.\d+):3000$/;
+        
+        if (allowedOrigins.includes(origin) || localNetworkPattern.test(origin)) {
+            callback(null, true);
+        } else {
+            callback(null, true); // 開発環境では全て許可（本番ではfalseに変更）
+        }
+    },
     credentials: true
 }));
 
@@ -52,7 +64,10 @@ if(process.env.NODE_ENV !== 'production') {
     // 静的ファイルの配信設定
     app.use(express.static(path.join(__dirname, '../client/poker-app/build')));
     // React のエントリポイントを配信
-    app.get('*', (req, res) => {
+    app.get('*', (req, res, next) => {
+        if (req.path.startsWith('/api/')) {
+            return next();
+        }
         res.sendFile(path.join(__dirname, '../client/poker-app/build', 'index.html'));
     });
 }
@@ -63,11 +78,23 @@ const server = createServer(app);
 // Socket.IO サーバーを初期化
 const io = new Server(server, {
     cors: {
-        origin: [
-            "https://my-project-30c6b.web.app",
-            "http://localhost:3000",
-            "http://192.168.0.50:3000"
-        ], 
+        origin: (origin, callback) => {
+            if (!origin) return callback(null, true);
+            
+            const allowedOrigins = [
+                "https://my-project-30c6b.web.app",
+                "http://localhost:3000"
+            ];
+            
+            // ローカルネットワークIPアドレスを許可
+            const localNetworkPattern = /^http:\/\/(192\.168\.\d+\.\d+|10\.\d+\.\d+\.\d+|172\.(1[6-9]|2[0-9]|3[01])\.\d+\.\d+):3000$/;
+            
+            if (allowedOrigins.includes(origin) || localNetworkPattern.test(origin)) {
+                callback(null, true);
+            } else {
+                callback(null, true); // 開発環境では全て許可
+            }
+        },
         methods: ["GET", "POST"],
         credentials: true
     }
@@ -182,6 +209,53 @@ io.on('connection', (socket) => {
             rooms[roomId].total += Number(user.message);
         });
         io.to(roomId).emit('receive_message', { username, message, total: rooms[roomId].total });
+    });
+
+    //代理入力のスタックを送信する
+    socket.on('proxy_message', ({ roomId, username, message, rebuy, uid }, callback) => {
+        const proxyUserMessage = Number(message) - (rooms[roomId].stack || 0) - (Number(rebuy) || 0);
+        
+        // 代理入力ユーザーが既に存在するかチェック
+        const existingUserIndex = rooms[roomId].users.findIndex(user => user.username === username);
+        
+        if (existingUserIndex >= 0) {
+            // 既存のユーザーが存在する場合
+            const existingUser = rooms[roomId].users[existingUserIndex];
+            
+            // 通常ユーザー（socketIdが存在し、isProxyがfalseまたは存在しない）の場合はエラー
+            if (existingUser.socketId && !existingUser.isProxy) {
+                return callback?.({ success: false, message: 'このユーザーはすでに参加しています' });
+            }
+            
+            // 代理入力ユーザーの場合は、データを更新する
+            rooms[roomId].users[existingUserIndex].message = proxyUserMessage;
+            rooms[roomId].users[existingUserIndex].rebuy = Number(rebuy) || 0;
+        } else {
+            // 新しい代理入力ユーザーを追加
+            rooms[roomId].users.push({
+                socketId: null,
+                username,
+                message: proxyUserMessage,
+                uid: uid || null,
+                rebuy: Number(rebuy) || 0,
+                isProxy: true
+            });
+        }
+        
+        // totalを再計算
+        rooms[roomId].total = 0;
+        rooms[roomId].users.forEach((user) => {
+            rooms[roomId].total += Number(user.message);
+        });
+        
+        io.to(roomId).emit('receive_proxy_message', {
+            username,
+            message: proxyUserMessage,
+            total: rooms[roomId].total,
+            userInfo: rooms[roomId].users
+        });
+        
+        callback?.({ success: true });
     });
 
     //部屋の退室を実行する
